@@ -6,14 +6,10 @@ require_once("../Classes/formatarString.php");
 //variaveis para o menu
 $pag = @$_GET["pag"];
 $menu1 = "Materiais_de_estudo";
-$menu2 = "Estudos_complementares";
-$menu3 = "Atividades";
-$menu4 = "Revisão_do_Assunto";
-$menu5 = "Desafio";
-$menu6 = "menu6";
+$menu2 = "conteudo";
 
 
-// TODO: Verificar se o usuário está logado antes de mostrar o conteúdo
+// Verificar se o usuário está logado antes de mostrar o conteúdo
 if (@$_SESSION['id_usuario'] == null || @$_SESSION['nivel_usuario'] != 'aluno') {
     echo "<script language='javascript'> window.location='../index.php' </script>";
     @session_destroy();
@@ -131,28 +127,28 @@ for ($i = 0; $i < $total_reg; $i++) {
                     ';
                 }
 
-                
-               
-                
-                    echo '<div id="collapse', $topicoFormatado, '" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">';
-                    echo '<div class="bg-white py-2 collapse-inner rounded">';
-                    echo '<h6 class="collapse-header">Sub-Conteúdos:</h6>';
-                    
-                  
 
-                    $res2 = $query->fetchAll(PDO::FETCH_ASSOC);
-                    $total_reg2 = @count($res2);
 
-                    for ($j = 0; $j < $total_reg2; $j++) {
-                        $postagemFormatada = removerAcentos(strtolower(str_replace(" ", "_", $res2[$j]['pos_titulo'])));
-                        echo '<a class="collapse-item" href="../conteudo/', $postagemFormatada, '.php">', $res2[$j]['pos_titulo'], '</a>';
-                    }
-                    echo '</div>';
-                    echo '</div>';
-    
-    
-                
-  
+
+                echo '<div id="collapse', $topicoFormatado, '" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">';
+                echo '<div class="bg-white py-2 collapse-inner rounded">';
+                echo '<h6 class="collapse-header">Sub-Conteúdos:</h6>';
+
+
+
+                $res2 = $query->fetchAll(PDO::FETCH_ASSOC);
+                $total_reg2 = @count($res2);
+
+                for ($j = 0; $j < $total_reg2; $j++) {
+                    $postagemFormatada = removerAcentos(strtolower(str_replace(" ", "_", $res2[$j]['pos_titulo'])));
+                    echo '<a class="collapse-item" href="index.php?pag=conteudo&id=', $res2[$j]['pos_id_pk'], '">', $res2[$j]['pos_titulo'], '</a>';
+                }
+                echo '</div>';
+                echo '</div>';
+
+
+
+
 
 
                 // <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -259,22 +255,12 @@ for ($i = 0; $i < $total_reg; $i++) {
 
                     <?php if (@$pag == null) {
                         @include_once("home.php");
-                    } else if (@$pag == $menu1) {
-                        @include_once(@$menu1 . ".php");
-                    } else if (@$pag == $menu2) {
-                        @include_once(@$menu2 . ".php");
-                    } else if (@$pag == $menu3) {
-                        @include_once(@$menu3 . ".php");
-                    } else if (@$pag == $menu4) {
-                        @include_once(@$menu4 . ".php");
-                    } else if (@$pag == $menu5) {
-                        @include_once(@$menu5 . ".php");
-                    } else if (@$pag == $menu6) {
-                        @include_once(@$menu6 . ".php");
+                    } else if (@$pag == "conteudo") {
+                        @include_once("../painel-aluno/conteudo/index.php");
                     } else {
                         @include_once("home.php");
-                    }
-                    ?>
+                    } ?>
+                    
 
 
 

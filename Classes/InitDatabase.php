@@ -60,7 +60,7 @@ class InitDatabase {
         $sql = "CREATE TABLE IF NOT EXISTS postagens (
             pos_id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             pos_titulo VARCHAR(30) NOT NULL,
-            pos_texto VARCHAR(500) NOT NULL,
+            pos_texto TEXT,
             pos_status int NOT NULL,
             pos_imagem VARCHAR(50) NOT NULL,
             pos_data TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
