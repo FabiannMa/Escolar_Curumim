@@ -8,7 +8,7 @@ $rodape_relatorios = "Desenvolvido por Fabiann Barbosa - PPGI/UFAM";
 //VARIAVEIS DO BANCO DE DADOS LOCAL
 $servidor = 'localhost';
 $usuario = 'root';
-$senha = '';
-$banco = 'sistema_trigonometria';
+$senha = 'admin';
+$banco = 'curumim';
 
  ?>

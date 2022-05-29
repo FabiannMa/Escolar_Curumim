@@ -1,6 +1,9 @@
+<!-- SCRIPT NÃO FUNCIONANDO -->
+
+
 <?php 
 $pag = "professores";
-require_once("../../conexao.php"); 
+require_once("../conexao.php"); 
 
 @session_start();
     //verificar se o usuário está autenticado
