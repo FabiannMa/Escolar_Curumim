@@ -39,7 +39,8 @@ if (@$_SESSION['nivel_usuario'] != 'professor' || @$_SESSION['id_usuario'] == nu
     <meta name="author" content="Fabiann Barbosa">
 
     <title>Curumim Trigonometria</title>
-
+    
+	<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -57,6 +58,8 @@ if (@$_SESSION['nivel_usuario'] != 'professor' || @$_SESSION['id_usuario'] == nu
 
     <link rel="shortcut icon" href="../img/ico.ico" type="image/x-icon">
     <link rel="icon" href="../img/ico.ico" type="image/x-icon">
+
+    
 </head>
 
 <body id="page-top">
@@ -141,7 +144,7 @@ if (@$_SESSION['nivel_usuario'] != 'professor' || @$_SESSION['id_usuario'] == nu
                 <a class="nav-link" href="index.php?pag=<?php echo $menu6 ?>">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <!-- <span><b>NOTIFICAÇÕES</b></span></a> -->
-                    <span><b>ENVIAR ATIVIDADES</b></span></a>
+                    <span><b>ENVIAR CONTEUDO</b></span></a>
             </li>
 
             <!-- Nav Item - Tables -->

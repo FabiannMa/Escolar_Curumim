@@ -1,7 +1,12 @@
 <?php
-@session_start();
 require_once("../conexao.php");
 require_once("../Classes/formatarString.php");
+
+// Verificar se o usuário está logado antes de mostrar o conteúdo
+require_once("utils/verifyAuth.php");
+
+// Verifica se o usuário está em uma turma
+require_once("utils/verifyClassroom.php");
 
 //variaveis para o menu
 $pag = @$_GET["pag"];
@@ -9,11 +14,7 @@ $menu1 = "Materiais_de_estudo";
 $menu2 = "conteudo";
 
 
-// Verificar se o usuário está logado antes de mostrar o conteúdo
-if (@$_SESSION['id_usuario'] == null || @$_SESSION['nivel_usuario'] != 'aluno') {
-    echo "<script language='javascript'> window.location='../index.php' </script>";
-    @session_destroy();
-}
+
 
 
 
@@ -260,7 +261,7 @@ for ($i = 0; $i < $total_reg; $i++) {
                     } else {
                         @include_once("home.php");
                     } ?>
-                    
+
 
 
 
@@ -273,10 +274,10 @@ for ($i = 0; $i < $total_reg; $i++) {
 
 
         </div>
-        <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
+    
+    
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">

@@ -32,13 +32,14 @@ class InitDatabase {
         $pdo->query($sql);        
     }
 
-    // Cria tabela de turmas
+    // Cria tabela de turmas 
     public function createTableTurmas($pdo) {
         $sql = "CREATE TABLE IF NOT EXISTS turmas (
             tur_id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             tur_name VARCHAR(30) NOT NULL,
             tur_status int NOT NULL,
             tur_imagem VARCHAR(50) NOT NULL,
+            tur_hash_code VARCHAR(6) NOT NULL,
             data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         $pdo->query($sql);        
@@ -69,6 +70,19 @@ class InitDatabase {
         $pdo->query($sql);        
     }
 
+    // Criar tabela de Turma e Usuário
+    public function createTableTurmaUsuario($pdo) {
+        $sql = "CREATE TABLE IF NOT EXISTS turma_usuario (
+            tur_usu_id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            tur_id_fk INT(6) UNSIGNED NOT NULL,
+            usu_id_fk INT(6) UNSIGNED NOT NULL,
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )";
+        $pdo->query($sql);        
+    }
+
+    
+
 
 
     // Contrutor
@@ -87,5 +101,8 @@ class InitDatabase {
         echo "<script language='javascript'> console.log('Tabela de turma_topicos criada com sucesso!') </script>";
         $this->createTablePostagens($pdoClass);
         echo "<script language='javascript'> console.log('Tabela de postagens criada com sucesso!') </script>";
+        $this->createTableTurmaUsuario($pdoClass);
+        echo "<script language='javascript'> console.log('Tabela de turma_usuario criada com sucesso!') </script>";
+
     }
 }
