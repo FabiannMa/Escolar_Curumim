@@ -40,6 +40,7 @@ class InitDatabase {
             tur_status int NOT NULL,
             tur_imagem VARCHAR(50) NOT NULL,
             tur_hash_code VARCHAR(6) NOT NULL,
+            tur_id_professor INT(6) NOT NULL,
             data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         $pdo->query($sql);        

@@ -13,11 +13,6 @@ $pag = @$_GET["pag"];
 $menu1 = "Materiais_de_estudo";
 $menu2 = "conteudo";
 
-
-
-
-
-
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios where id = '$_SESSION[id_usuario]'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -26,18 +21,13 @@ $cpf_usu = @$res[0]['cpf'];
 $email_usu = @$res[0]['email'];
 $idUsuario = @$res[0]['id'];
 
-// query tópicos
-$query = $pdo->query("SELECT * FROM topicos");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
+// Recupera turmas do Aluno
+$sql = "SELECT turmas.tur_id_pk, turmas.tur_name, turmas.tur_status, turmas.tur_imagem, turmas.tur_hash_code, turmas.data_cadastro FROM turmas INNER JOIN turma_usuario ON turmas.tur_id_pk = turma_usuario.tur_id_fk WHERE turma_usuario.usu_id_fk = " . $_SESSION['id_usuario'] . ";";
+$query = $pdo->query($sql);
+$turmas = $query->fetchAll(PDO::FETCH_ASSOC);
 
-// Array com os nomes dos tópicos
-$topicos = array();
-for ($i = 0; $i < $total_reg; $i++) {
-    $topicos[$i] = $res[$i]['top_name'];
-    $status[$i] = $res[$i]['top_status'];
-    $topicos_id[$i] = $res[$i]['top_id_pk'];
-}
+
+
 
 ?>
 
@@ -97,33 +87,30 @@ for ($i = 0; $i < $total_reg; $i++) {
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Conteúdos
+                Turmas
             </div>
 
 
             <?php
 
-            // foreach topicos
-            for ($i = 0; $i < $total_reg; $i++) {
+            // Mostra turmas do usuário na barra de menu
+            foreach ($turmas as $turma) {
 
-                $topicoFormatado = removerAcentos(strtolower(str_replace(" ", "_", $topicos[$i])));
-                $query = $pdo->query("SELECT * FROM postagens WHERE top_id_fk = '$topicos_id[$i]'");
-                // console log para verificar se o topico está sendo carregado
-                echo "<script>console.log('$topicos[$i]');  console.log('$topicos_id[$i]');</script>";
-
-                if ($status[$i] == 1) {
+                $topicoFormatado = removerAcentos(strtolower(str_replace(" ", "_", $turma['tur_name'])));
+                
+                if ($turma['tur_status'] == 1) {
                     echo '<li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse', $topicoFormatado, '" aria-expanded="true" aria-controls="collapse', $topicoFormatado, '">
                         <i class="fas fa-fw fa-folder"></i>
-                        <span>' . $topicos[$i] . '</span>
+                        <span>' . $turma['tur_name'] . '</span>
                     </a>
                     ';
                 }
-                if ($status[$i] == 0) {
+                if ($turma['tur_status'] == 0) {
                     echo '<li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse', $topicoFormatado, '" aria-expanded="true" aria-controls="collapse', $topicoFormatado, '">
                         <i class="fas fa-fw fa-folder-open"></i>
-                        <span>' . $topicos[$i] . '</span>
+                        <span>' . $turma['tur_name'] . '</span>
                     </a>
                     ';
                 }
@@ -133,18 +120,12 @@ for ($i = 0; $i < $total_reg; $i++) {
 
                 echo '<div id="collapse', $topicoFormatado, '" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">';
                 echo '<div class="bg-white py-2 collapse-inner rounded">';
-                echo '<h6 class="collapse-header">Sub-Conteúdos:</h6>';
+                echo '<h6 class="collapse-header">Turma:</h6>';
+                echo '<a class="collapse-item" href="../turma/index.php?tur_id_pk=' . $turma['tur_id_pk'] . '">Conteúdo</a>';
+                echo '<a class="collapse-item" href="../turma/material.php?tur_id_pk=' . $turma['tur_id_pk'] . '">Material de Estudo</a>';
+                echo '<a class="collapse-item" href="../turma/forum.php?tur_id_pk=' . $turma['tur_id_pk'] . '">Fórum</a>';
+                echo '<a class="collapse-item" href="../turma/avaliacao.php?tur_id_pk=' . $turma['tur_id_pk'] . '">Avaliação</a>';
 
-
-
-                $res2 = $query->fetchAll(PDO::FETCH_ASSOC);
-                $total_reg2 = @count($res2);
-
-                for ($j = 0; $j < $total_reg2; $j++) {
-                    $postagemFormatada = removerAcentos(strtolower(str_replace(" ", "_", $res2[$j]['pos_titulo'])));
-                    echo '<a class="collapse-item" href="index.php?pag=conteudo&id=', $res2[$j]['pos_id_pk'], '">', $res2[$j]['pos_titulo'], '</a>';
-                }
-                echo '</div>';
                 echo '</div>';
 
 
@@ -258,9 +239,18 @@ for ($i = 0; $i < $total_reg; $i++) {
                         @include_once("home.php");
                     } else if (@$pag == "conteudo") {
                         @include_once("../painel-aluno/conteudo/index.php");
-                    } else {
+                    } else if (@$pag == "turmas") {
+                        @include_once("../painel-aluno/turmas/index.php");
+                    } else if (@$pag == "forum") {
+                        @include_once("../painel-aluno/forum/index.php");
+                    } else if (@$pag == "avaliacao") {
+                        @include_once("../painel-aluno/avaliacao/index.php");
+                    } else if (@$pag == "material") {
+                        @include_once("../painel-aluno/material/index.php");
+                    } else  {
                         @include_once("home.php");
                     } ?>
+                        
 
 
 

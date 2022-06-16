@@ -26,9 +26,6 @@ if($total_reg > 0){
 
 	
 	switch ($nivel) {
-		case 'Admin':
-			echo "<script language='javascript'> window.location='painel-adm' </script>";
-		break;
 		case 'professor':
 			echo "<script language='javascript'> window.location='painel-professor' </script>";
 		break;

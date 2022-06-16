@@ -16,4 +16,17 @@ function verifyClassroom($pdo, $id_aluno) {
         return false;
     }
 }
+
+function getConteudosTurma($pdo, $id_turma) {
+   // Busca relação turma_topicos
+    $sql = "SELECT * FROM turma_topicos WHERE tur_id_fk = $id_turma";
+    $query = $pdo->query($sql);
+    
+    // retorna a quantidade de topicos da turma
+    return $query->rowCount();
+    
+
+}
+
+
 ?>

@@ -2,7 +2,6 @@
 
 $nome_sistema = "Curumim Trigonometria";
 $url = "http://localhost/Escolar/";
-$email_adm = 'jamil.ciro@gmail.com';
 $rodape_relatorios = "Desenvolvido por Fabiann Barbosa - PPGI/UFAM";
 
 //VARIAVEIS DO BANCO DE DADOS LOCAL
@@ -11,4 +10,8 @@ $usuario = 'root';
 $senha = 'admin';
 $banco = 'curumim';
 
+
+// Cliente 
+// ID c031e7e0f19e956
+// Secret bfd35859caa70ac3644042c85ef2eb2c005cc0e3
  ?>

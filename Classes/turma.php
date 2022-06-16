@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 class Turma {
     public $id;
     public $nome;
@@ -7,12 +9,15 @@ class Turma {
     public $imagem;
     public $hash_code;
     public $data_cadastro;
+    public $id_professor;
 
     public function __construct($nome, $status, $imagem, $hash_code) {
         $this->nome = $nome;
         $this->status = $status;
         $this->imagem = $imagem;
         $this->hash_code = $hash_code;
+        $this->id_professor = $_SESSION['id_usuario'];
+
     }
     public function generateHashCode($id) {
         // The hash code hash 6 digits

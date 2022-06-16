@@ -4,7 +4,7 @@
 require_once '../../Classes/turma.php';
 require_once '../../conexao.php';
 // Instancia a classe
-$turma = new Turma($_GET['nome'], $_GET['status'], "default", "temp");
+$turma = new Turma($_GET['nome'], 1, "default", "temp");
 
 // Verifica se o nome da turma já existe
 $sql = "SELECT * FROM turmas WHERE tur_name = '$turma->nome'";
@@ -59,7 +59,7 @@ if (count($turmaExiste) > 0) {
 
 
 // Salva no banco de dados
-$sql = "INSERT INTO turmas (tur_name, tur_status, tur_imagem, tur_hash_code) VALUES ('$turma->nome', '$turma->status', '$turma->imagem', '$turma->hash_code')";
+$sql = "INSERT INTO turmas (tur_name, tur_status, tur_imagem, tur_hash_code, tur_id_professor) VALUES ('$turma->nome', '$turma->status', '$turma->imagem', '$turma->hash_code', '$turma->id_professor')";
 $pdo->query($sql);
 
 // Recupera o ID da turma cadastrada
