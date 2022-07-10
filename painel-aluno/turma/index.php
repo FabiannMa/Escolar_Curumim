@@ -60,6 +60,45 @@ require_once("../utils/verifyAuth.php");
             }
         }
     </script>
+
+    <style>
+        :root {
+            --line-border-fill: #3498db;
+            --line-border-empty: #e0e0e0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .progress-container {
+            display: flex;
+        }
+
+        .circle {
+            background-color: #fff;
+            color: #999;
+            border-radius: 50%;
+            height: 150px;
+            width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #e0e0e0;
+            transition: 0.4s ease;
+            margin: 0px 20px 20px 0px;
+            font: 700 1rem/1 'Inter', sans-serif;
+            
+        }
+
+        .circle.active  {
+            border-color: var(--line-border-fill);
+            background-color: rgba(200,220,255,0.2);
+        }
+
+  
+
+    </style>
 </head>
 
 <body id="page-top">
@@ -107,7 +146,7 @@ require_once("../utils/verifyAuth.php");
 
 
 
-            
+
 
             echo '</li>';
 
@@ -305,63 +344,62 @@ require_once("../utils/verifyAuth.php");
                     </div>
                     <!-- /.container-fluid -->
 
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">
-                                Conteúdos
-                            </h6>
-                        </div>
-                        <div class="card-body">
-                            <!-- Menu de Opções em cards -->
-                            <div class="row">
-                                <div class="col-xl-3 col-md-6 mb-4">
-                                    <!-- mostra conteudos da turma -->
-                                    <?php
-
-                                    // Recupera os conteudos da turma
-                                    $sql = "SELECT * FROM postagens WHERE top_id_fk IN (SELECT top_id_fk FROM turma_topicos WHERE tur_id_fk = $_GET[id])";
-                                    $query = $pdo->query($sql);
-                                    $conteudos = $query->fetchAll();
-                                    $index = 0;
-                                    // Mostra os conteudos
-
-                                    echo '<div class="accordion" id="accordionExample" style="width:80vw;"> ';
-                                    foreach ($conteudos as $conteudo) {
-                                    ?>
-                                        <div class="accordion-item bg-white border border-gray-200">
-                                            <h2 class="accordion-header mb-0" id="heading<?php echo $index ?>">
-                                                <button class=" accordion-button relative flex items-center w-full py-4 px-5 text-base text-gray-800 text-left bg-white border-0 rounded-none transition focus:outline-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $index ?>" aria-expanded="<?php if ($index == 0) { echo "true";} else { echo "false"; } ?> aria-controls=" collapse<?php echo $index; ?>">
-                                                    <?php
-                                                    echo $conteudo['pos_titulo'];
-                                                    ?>
-                                                </button>
-                                            </h2>
-                                            <div id="collapse<?php echo $index ?>" class="accordion-collapse collapse <?php if ($index == 0) {echo "show";} ?>" aria-labelledby="heading<?php echo $index ?>" data-parent="#accordionExample">
-                                                <div class="accordion-body py-4 px-5">
-                                                    <?php
-                                                    echo $conteudo['pos_texto'];
-                                                    ?>
-                                                </div>
-                                            </div>
-
-
-                                        <?php
-                                        $index++;
-                                    }
-                                        ?>
-
-
-
-                                        </div>
-                                </div>
-
+                    <div>
+                        <!-- Titulo da pagina -->
+                        <div class="card">
+                            <!-- Card Header -->
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary text-2xl">
+                                    Conteúdos
+                                </h6>
                             </div>
-                            <!-- End of Main Content -->
+        
+                    <?php 
+                        // Recupera os topicos da turma	
+                        $sql = "SELECT * FROM topicos WHERE top_id_pk IN (SELECT top_id_fk FROM turma_topicos WHERE tur_id_fk = $_GET[id])";
+                        $query = $pdo->query($sql);
+                        $topicos = $query->fetchAll();
 
+                        foreach ($topicos as $topico) {
+                            // Recupera os conteudos do topico
+                            $sql = "SELECT * FROM postagens WHERE top_id_fk = $topico[top_id_pk]";
+                            $query = $pdo->query($sql);
+                            $conteudos = $query->fetchAll();
+                            $index = 0;
+                            // Mostra os conteudos
+                            echo '<div class="card shadow mb-4">';
+                            echo '<div class="card-header py-3">';
+                            echo '<h6 class="m-0 font-weight-bold text-primary">';
+                            echo $topico['top_name'];
+                            echo '</h6>';
+                            echo '</div>';
+                            echo '<div class="card-body">';
+                            echo '<div class="progress-container">';
+                            foreach ($conteudos as $conteudo) {
+                                ?>
+                                <div class="flex" style="justify-content: center; align-items: center; flex-direction: column;">
+                                    <div class="circle <?php if ($conteudo['pos_status'] == 1) echo 'active' ?> "> <?php if ($conteudo['pos_status'] == 1) echo 'Iniciar' ?></div>
+                                    <?php echo $conteudo['pos_titulo']; ?>
+                                
+                                </div>
+                                <?php
+                            }
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                    
 
-
-                        </div>
+                    ?>
+                    
                     </div>
+
+                    
+                    
+                    
+                    
+                    
+                    
                     <!-- End of Page Wrapper -->
 
 
@@ -499,3 +537,20 @@ require_once("../utils/verifyAuth.php");
 <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+

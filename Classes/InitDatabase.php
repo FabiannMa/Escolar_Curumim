@@ -27,8 +27,7 @@ class InitDatabase {
             top_name VARCHAR(30) NOT NULL,
             top_status int NOT NULL,
             top_imagem VARCHAR(50) NOT NULL,
-            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )";
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)";
         $pdo->query($sql);        
     }
 
@@ -66,7 +65,9 @@ class InitDatabase {
             pos_status int NOT NULL,
             pos_imagem VARCHAR(50) NOT NULL,
             pos_data TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            top_id_fk INT(6)
+            top_id_fk INT(6),
+            pos_requisito_fk INT(6) DEFAULT NULL
+
         )";
         $pdo->query($sql);        
     }

@@ -47,6 +47,20 @@
                         ?>
                     </select>
                 </div>
+                <div class="form-group card-body">
+                    <label for="">Pré-Requisito</label>
+                    <select class="form-control" name="pre">
+                        <option value="0">Nenhum</option>
+                        <?php
+                        $sql = "SELECT * FROM postagens WHERE top_id_fk IN (SELECT top_id_fk FROM turma_topicos WHERE tur_id_fk = $id_turma_pk)";
+                        $result = $pdo->query($sql);
+                        $postagens = $result->fetchAll();
+                        foreach ($postagens as $postagem) {
+                            echo "<option value='" . $postagem['pos_id_pk'] . "'>" . $postagem['pos_titulo'] . "</option>";
+                        } 
+                        ?>
+                    </select>
+                </div>
             </div>
 
             <div class="form-group card-body">

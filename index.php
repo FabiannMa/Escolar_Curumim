@@ -4,14 +4,6 @@ require_once("Classes/InitDatabase.php");
 // Inicializa database
 $db = new InitDatabase($pdo);
 
-//CRIAR AUTOMATICAMENTE O USUARIO ADMIN
-$query = $pdo->query("SELECT * FROM usuarios where nivel = 'admin'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if ($total_reg == 0) {
-	$res = $pdo->query("INSERT INTO usuarios SET nome = 'Administrador', cpf = '000.000.000-00', email = '$email_adm', senha = '123', nivel = 'Admin'");
-}
-
 
 ?>
 <!DOCTYPE html>
