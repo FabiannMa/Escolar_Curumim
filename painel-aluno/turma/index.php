@@ -79,29 +79,141 @@ require_once("../utils/verifyAuth.php");
             background-color: #fff;
             color: #999;
             border-radius: 50%;
-            height: 150px;
-            width: 150px;
+            height: 100px;
+            width: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 3px solid #e0e0e0;
             transition: 0.4s ease;
-            margin: 0px 20px 20px 0px;
+            margin: 0px 0px 0px 0px;
             font: 700 1rem/1 'Inter', sans-serif;
-            
+
         }
 
-        .circle.active  {
+        .circle.active {
             border-color: var(--line-border-fill);
-            background-color: rgba(200,220,255,0.2);
+            background-color: rgba(200, 220, 255, 0.2);
         }
 
-  
+        .conteudobox {
+            margin: 10px;
+        }
 
+        .popContent {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            padding: 20px;
+        }
+
+        .popup {
+            width: 70%;
+            height: 85%;
+            background-color: rgba(255, 255, 255);
+            z-index: 9999;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+
+        .popHeader {
+            font-size: 2em;
+            font-weight: bold;
+            display: flex;
+            align-items: center; 
+            justify-content: space-between;
+        }
+        .close{
+            cursor: pointer;
+            font-size: 1.5em;
+            align-self: flex-start;
+            text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+
+        }   
+        .popHeader h1{
+            margin-bottom: 10px;
+            margin-top: 40px;
+            margin-left: 60px;
+        }
+        .popBody{
+            display: flex;
+            flex-direction: column;
+            height: 85%;
+        }
+        .popBody .keywords{
+            display: flex;
+            margin-left: 60px;
+        }
+        .popBody .keywords .keyword{
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: .8em;
+            background-color: #3498db;
+            color:white;
+            padding: 5px;
+            border-radius: 5px;
+            ;
+        }
+        .popBody .popText{
+            margin-left: 60px;
+            margin-top: 10px;
+            font-size: 1.2em;
+            /*Scroll*/
+            overflow-y: scroll;
+            height: 100%;
+            width: 94%;
+            padding: 10px;
+
+        }
+        .popFooter{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        #popConteudo{
+            display: none;
+            transition: all 0.5s ease;
+            transform: scale(0);
+        }
     </style>
 </head>
 
 <body id="page-top">
+    <div class="popContent" id="popConteudo">
+        <div class="popup">
+            <div class="popHeader">
+                <h1 id="tituloConteudo">
+                    
+                </h1>
+                <div class="close" onclick="closePopup()">&times;</div>
+            </div>
+            <div class="popBody">
+                <div class="keywords">
+                    <span class="keyword">
+                        <p>Geometria</p>
+                    </span>
+                </div>
+                <div class="popText">
+                    <p id="textoConteudo">Ao clicar em "Sim", o conteúdo será excluído permanentemente.</p>
+                </div>
+            </div>
+            <div class="popFooter">
+                <button class="btn btn-primary" id="btn-ok">Iniciar Avaliação</button>
+            </div>
+        </div>
+    </div>
+
     </div>
     </div>
     <!-- Page Wrapper -->
@@ -139,22 +251,8 @@ require_once("../utils/verifyAuth.php");
                     </a>
                     ';
             }
-
-
-
-
-
-
-
-
-
             echo '</li>';
-
-
-
             ?>
-
-
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -353,166 +451,175 @@ require_once("../utils/verifyAuth.php");
                                     Conteúdos
                                 </h6>
                             </div>
-        
-                    <?php 
-                        // Recupera os topicos da turma	
-                        $sql = "SELECT * FROM topicos WHERE top_id_pk IN (SELECT top_id_fk FROM turma_topicos WHERE tur_id_fk = $_GET[id])";
-                        $query = $pdo->query($sql);
-                        $topicos = $query->fetchAll();
 
-                        foreach ($topicos as $topico) {
-                            // Recupera os conteudos do topico
-                            $sql = "SELECT * FROM postagens WHERE top_id_fk = $topico[top_id_pk]";
+                            <?php
+                            // Recupera os topicos da turma	
+                            $sql = "SELECT * FROM topicos WHERE top_id_pk IN (SELECT top_id_fk FROM turma_topicos WHERE tur_id_fk = $_GET[id])";
                             $query = $pdo->query($sql);
-                            $conteudos = $query->fetchAll();
-                            $index = 0;
-                            // Mostra os conteudos
-                            echo '<div class="card shadow mb-4">';
-                            echo '<div class="card-header py-3">';
-                            echo '<h6 class="m-0 font-weight-bold text-primary">';
-                            echo $topico['top_name'];
-                            echo '</h6>';
-                            echo '</div>';
-                            echo '<div class="card-body">';
-                            echo '<div class="progress-container">';
-                            foreach ($conteudos as $conteudo) {
-                                ?>
-                                <div class="flex" style="justify-content: center; align-items: center; flex-direction: column;">
-                                    <div class="circle <?php if ($conteudo['pos_status'] == 1) echo 'active' ?> "> <?php if ($conteudo['pos_status'] == 1) echo 'Iniciar' ?></div>
-                                    <?php echo $conteudo['pos_titulo']; ?>
-                                
-                                </div>
-                                <?php
-                            }
-                            echo '</div>';
-                            echo '</div>';
-                            echo '</div>';
-                        }
-                    
+                            $topicos = $query->fetchAll();
 
-                    ?>
-                    
-                    </div>
-
-                    
-                    
-                    
-                    
-                    
-                    
-                    <!-- End of Page Wrapper -->
-
-
-
-                    <!-- Scroll to Top Button-->
-                    <a class="scroll-to-top rounded" href="#page-top">
-                        <i class="fas fa-angle-up"></i>
-                    </a>
-
-
-
-
-                    <!--  Modal Perfil-->
-                    <div class="modal fade" id="ModalPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Editar Perfil</h5>
-                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-
-
-
-                                <form id="form-perfil" method="POST" enctype="multipart/form-data">
-                                    <div class="modal-body">
-
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-12">
-                                                <div class="form-group">
-                                                    <label>Nome</label>
-                                                    <input value="<?php echo $nome ?>" type="text" class="form-control" id="nome" name="nome" placeholder="Nome">
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>CPF</label>
-                                                    <input value="<?php echo $cpf ?>" type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>Email</label>
-                                                    <input value="<?php echo $email ?>" type="email" class="form-control" id="email" name="email" placeholder="Email">
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>Senha</label>
-                                                    <input value="" type="password" class="form-control" id="text" name="senha" placeholder="Senha">
-                                                </div>
+                            foreach ($topicos as $topico) {
+                                // Recupera os conteudos do topico
+                                $sql = "SELECT * FROM postagens WHERE top_id_fk = $topico[top_id_pk]";
+                                $query = $pdo->query($sql);
+                                $conteudos = $query->fetchAll();
+                                $index = 0;
+                                // Mostra os conteudos
+                                echo '<div class="card shadow mb-4">';
+                                echo '<div class="card-header py-3">';
+                                echo '<h6 class="m-0 font-weight-bold text-primary">';
+                                echo $topico['top_name'];
+                                echo '</h6>';
+                                echo '</div>';
+                                echo '<div class="card-body">';
+                                echo '<div class="progress-container">';
+                                foreach ($conteudos as $conteudo) {
+                            ?>
+                                    <?php if ($conteudo['pos_status'] == 1 || $conteudo['pos_status'] == 3) { ?>
+                                        <a onclick="openPopup(<?php echo $conteudo['pos_id_pk']; ?>)">
+                                        <?php } ?>
+                                        <div class="flex conteudobox" style="justify-content: center; align-items: center; flex-direction: column;">
+                                            <div class="circle <?php if ($conteudo['pos_status'] == 1) echo 'active' ?> ">
+                                                <?php if ($conteudo['pos_status'] == 1) echo 'Iniciar' ?>
+                                                <?php if ($conteudo['pos_status'] == 2) echo '<i class="fas fa-lock"></i>' ?>
+                                                <?php if ($conteudo['pos_status'] == 3) echo '<i class="fas fa-check"></i>' ?>
                                             </div>
-                                            <div class="col-md-6 col-sm-12">
-                                                <div class="col-md-12 form-group">
-                                                    <label>Foto</label>
-                                                    <input value="<?php echo $img ?>" type="file" class="form-control-file" id="imagem" name="imagem" onchange="carregarImg();">
+                                            <?php echo $conteudo['pos_titulo']; ?>
 
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <img src="../img/profiles/<?php echo $img ?>" alt="Carregue sua Imagem" id="target" width="100%">
-                                                </div>
-                                            </div>
                                         </div>
+                                        <?php
+                                        if ($conteudo['pos_status'] == 1 || $conteudo['pos_status'] == 3) {
+                                        ?>
+                                        </a>
+                            <?php
+                                        }
+                                    }
+                                    echo '</div>';
+                                    echo '</div>';
+                                    echo '</div>';
+                                }
+
+
+                            ?>
+
+                        </div>
+
+                        <!-- End of Page Wrapper -->
 
 
 
-                                        <small>
-                                            <div id="mensagem" class="mr-4">
+                        <!-- Scroll to Top Button-->
+                        <a class="scroll-to-top rounded" href="#page-top">
+                            <i class="fas fa-angle-up"></i>
+                        </a>
 
+
+
+
+                        <!--  Modal Perfil-->
+                        <div class="modal fade" id="ModalPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Editar Perfil</h5>
+                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+
+
+
+                                    <form id="form-perfil" method="POST" enctype="multipart/form-data">
+                                        <div class="modal-body">
+
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Nome</label>
+                                                        <input value="<?php echo $nome ?>" type="text" class="form-control" id="nome" name="nome" placeholder="Nome">
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>CPF</label>
+                                                        <input value="<?php echo $cpf ?>" type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Email</label>
+                                                        <input value="<?php echo $email ?>" type="email" class="form-control" id="email" name="email" placeholder="Email">
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Senha</label>
+                                                        <input value="" type="password" class="form-control" id="text" name="senha" placeholder="Senha">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-12">
+                                                    <div class="col-md-12 form-group">
+                                                        <label>Foto</label>
+                                                        <input value="<?php echo $img ?>" type="file" class="form-control-file" id="imagem" name="imagem" onchange="carregarImg();">
+
+                                                    </div>
+                                                    <div class="col-md-12 mb-2">
+                                                        <img src="../img/profiles/<?php echo $img ?>" alt="Carregue sua Imagem" id="target" width="100%">
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </small>
 
 
 
-                                    </div>
-                                    <div class="modal-footer">
+                                            <small>
+                                                <div id="mensagem" class="mr-4">
+
+                                                </div>
+                                            </small>
 
 
 
-                                        <input value="<?php echo $idUsuario ?>" type="hidden" name="txtid" id="txtid">
-                                        <input value="<?php echo $cpf ?>" type="hidden" name="antigo" id="antigo">
-
-                                        <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                        <button type="submit" name="btn-salvar-perfil" id="btn-salvar-perfil" class="btn btn-primary">Salvar</button>
-                                    </div>
-                                </form>
+                                        </div>
+                                        <div class="modal-footer">
 
 
+
+                                            <input value="<?php echo $idUsuario ?>" type="hidden" name="txtid" id="txtid">
+                                            <input value="<?php echo $cpf ?>" type="hidden" name="antigo" id="antigo">
+
+                                            <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                            <button type="submit" name="btn-salvar-perfil" id="btn-salvar-perfil" class="btn btn-primary">Salvar</button>
+                                        </div>
+                                    </form>
+
+
+                                </div>
                             </div>
                         </div>
-                    </div>
 
 
-                    <!-- Core plugin JavaScript-->
-                    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+                        <!-- Core plugin JavaScript-->
+                        <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
-                    <!-- Custom scripts for all pages-->
-                    <script src="../js/sb-admin-2.min.js"></script>
+                        <!-- Custom scripts for all pages-->
+                        <script src="../js/sb-admin-2.min.js"></script>
 
-                    <!-- Page level plugins -->
-                    <script src="../vendor/chart.js/Chart.min.js"></script>
+                        <!-- Page level plugins -->
+                        <script src="../vendor/chart.js/Chart.min.js"></script>
 
-                    <!-- Page level custom scripts -->
-                    <script src="../js/demo/chart-area-demo.js"></script>
-                    <script src="../js/demo/chart-pie-demo.js"></script>
+                        <!-- Page level custom scripts -->
+                        <script src="../js/demo/chart-area-demo.js"></script>
+                        <script src="../js/demo/chart-pie-demo.js"></script>
 
-                    <!-- Page level plugins -->
-                    <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-                    <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+                        <!-- Page level plugins -->
+                        <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
+                        <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
-                    <!-- Page level custom scripts -->
-                    <script src="../js/demo/datatables-demo.js"></script>
-                    <div class="modal">
-                        <!-- Place at bottom of page -->
-                    </div>
+                        <!-- Page level custom scripts -->
+                        <script src="../js/demo/datatables-demo.js"></script>
+                        <div class="modal">
+                            <!-- Place at bottom of page -->
+                        </div>
+
+
+
 </body>
 
 
@@ -528,11 +635,46 @@ require_once("../utils/verifyAuth.php");
 </style>
 
 
+<script>
+    $(document).ready(function() {
+        createCookies("idPost", "", "10");
+    });
 
-<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1">
+    function createCookies(name, value, days){
+        var expire;
+
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expire = "; expires=" + date.toGMTString();
+        } else {
+            expire = "";
+        }
+
+        document.cookie = escape(name) + "=" + escape(value) + expire + "; path=/";
+    }
+    var idPost = 0;
+    function openPopup(url) {
+        var pop = document.getElementById("popConteudo");
+        pop.style.display = "flex";
+        pop.style.transform = "scale(1)";
+
+        idPost = url;
 
 
+    }
+
+  
+    function closePopup(){
+        var pop = document.getElementById("popConteudo");
+        pop.style.transform = "scale(0)";
+        pop.style.display = "none";
+
+    }
 </script>
+
+<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+
 <df-messenger intent="WELCOME" chat-title="Curumim Assistente" chat-icon="https://imgur.com/tx1neHH.png" agent-id="99180b3c-bb9f-48e7-9282-f6a81556ae57" language-code="pt-br"></df-messenger>
 <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
 
@@ -540,17 +682,4 @@ require_once("../utils/verifyAuth.php");
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 </div>
-

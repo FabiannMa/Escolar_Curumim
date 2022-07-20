@@ -4,14 +4,20 @@ require_once("../../../conexao.php");
 $topico = $_POST['top'];
 $conteudo = $_POST['content'];
 $title = $_POST['title'];
-
+$preRequisito = $_POST['pre'];
+$status = "2";
 // Verifica se os campos estão vazios
 if($topico == "" || $conteudo == ""){
     echo "<script> window.location.href = '../'; </script>";
 }
 
-// Envia dados da postagem para o banco
-$sql = "INSERT INTO postagens (pos_titulo, pos_texto, top_id_fk, pos_status, pos_imagem) VALUES ('$title', '$conteudo', '$topico', 1, 'default.png')";
+if ($preRequisito == "0") {
+    $preRequisito = null;
+    $status = "1";
+}
+
+
+$sql = "INSERT INTO postagens (pos_titulo, pos_texto, top_id_fk, pos_status, pos_imagem, pos_requisito_fk) VALUES ('$title', '$conteudo', '$topico', '$status', 'default.png', '$preRequisito')";
 $pdo->query($sql);
 
 // Redireciona para a página de listagem
