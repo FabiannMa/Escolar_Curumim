@@ -4,8 +4,6 @@ require_once("../../conexao.php");
 // Verificar se o usuário está logado antes de mostrar o conteúdo
 require_once("../utils/verifyAuth.php");
 
-
-
 ?>
 
 
@@ -130,41 +128,47 @@ require_once("../utils/verifyAuth.php");
             font-size: 2em;
             font-weight: bold;
             display: flex;
-            align-items: center; 
+            align-items: center;
             justify-content: space-between;
         }
-        .close{
+
+        .close {
             cursor: pointer;
             font-size: 1.5em;
             align-self: flex-start;
             text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
 
-        }   
-        .popHeader h1{
+        }
+
+        .popHeader h1 {
             margin-bottom: 10px;
             margin-top: 40px;
             margin-left: 60px;
         }
-        .popBody{
+
+        .popBody {
             display: flex;
             flex-direction: column;
             height: 85%;
         }
-        .popBody .keywords{
+
+        .popBody .keywords {
             display: flex;
             margin-left: 60px;
         }
-        .popBody .keywords .keyword{
+
+        .popBody .keywords .keyword {
             margin-right: 10px;
             margin-bottom: 10px;
             font-size: .8em;
             background-color: #3498db;
-            color:white;
+            color: white;
             padding: 5px;
             border-radius: 5px;
             ;
         }
-        .popBody .popText{
+
+        .popBody .popText {
             margin-left: 60px;
             margin-top: 10px;
             font-size: 1.2em;
@@ -175,13 +179,15 @@ require_once("../utils/verifyAuth.php");
             padding: 10px;
 
         }
-        .popFooter{
+
+        .popFooter {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
         }
-        #popConteudo{
+
+        #popConteudo {
             display: none;
             transition: all 0.5s ease;
             transform: scale(0);
@@ -193,19 +199,17 @@ require_once("../utils/verifyAuth.php");
     <div class="popContent" id="popConteudo">
         <div class="popup">
             <div class="popHeader">
-                <h1 id="tituloConteudo">
-                    
-                </h1>
+
+                <iframe src="frames/iframetitle.php" frameborder="0" style="width: 100%;  height:80px"></iframe>
+
                 <div class="close" onclick="closePopup()">&times;</div>
             </div>
             <div class="popBody">
                 <div class="keywords">
-                    <span class="keyword">
-                        <p>Geometria</p>
-                    </span>
+                    <iframe src="frames/iframeKey.php" frameborder="0" style=" height:50px"></iframe>
                 </div>
                 <div class="popText">
-                    <p id="textoConteudo">Ao clicar em "Sim", o conteúdo será excluído permanentemente.</p>
+                    <iframe src="frames/iframeConteudo.php" frameborder="0" style="width: 100%; height:100%; "></iframe>
                 </div>
             </div>
             <div class="popFooter">
@@ -635,12 +639,12 @@ require_once("../utils/verifyAuth.php");
 </style>
 
 
-<script>
+<script type="text/javascript">
     $(document).ready(function() {
         createCookies("idPost", "", "10");
     });
 
-    function createCookies(name, value, days){
+    function createCookies(name, value, days) {
         var expire;
 
         if (days) {
@@ -654,18 +658,19 @@ require_once("../utils/verifyAuth.php");
         document.cookie = escape(name) + "=" + escape(value) + expire + "; path=/";
     }
     var idPost = 0;
+
     function openPopup(url) {
         var pop = document.getElementById("popConteudo");
         pop.style.display = "flex";
         pop.style.transform = "scale(1)";
 
-        idPost = url;
+
 
 
     }
 
-  
-    function closePopup(){
+
+    function closePopup() {
         var pop = document.getElementById("popConteudo");
         pop.style.transform = "scale(0)";
         pop.style.display = "none";

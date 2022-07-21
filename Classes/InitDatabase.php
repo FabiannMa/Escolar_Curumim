@@ -66,7 +66,7 @@ class InitDatabase {
             pos_imagem VARCHAR(50) NOT NULL,
             pos_data TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             top_id_fk INT(6),
-            pos_requisito_fk INT(6) DEFAULT NULL
+            pos_requisito_fk INT(6) 
 
         )";
         $pdo->query($sql);        
@@ -76,16 +76,37 @@ class InitDatabase {
     public function createTableTurmaUsuario($pdo) {
         $sql = "CREATE TABLE IF NOT EXISTS turma_usuario (
             tur_usu_id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            tur_id_fk INT(6) UNSIGNED NOT NULL,
-            usu_id_fk INT(6) UNSIGNED NOT NULL,
-            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            tur_id_fk INT(6),
+            usu_id_fk INT(6),
+            data_cadastro TIMESTAMP 
         )";
         $pdo->query($sql);        
     }
 
+    // Criar tabela de Postagem e Usuário
+    public function createTablePostagemUsuario($pdo) {
+        $sql = "CREATE TABLE IF NOT EXISTS postagem_usuario (
+            pos_usu_id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            pos_id_fk INT(6) UNSIGNED NOT NULL,
+            usu_id_fk INT(6) UNSIGNED NOT NULL,
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            pos_usu_status INT(1) NOT NULL,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )";
+        $pdo->query($sql);        
+    }
     
 
-
+    // public function dropAllTables($pdo){
+    //     // Dropa todas as tabelas
+    //     $sql = "DROP TABLE IF EXISTS usuarios;
+    //             DROP TABLE IF EXISTS topicos;
+    //             DROP TABLE IF EXISTS turmas;
+    //             DROP TABLE IF EXISTS turma_topicos;
+    //             DROP TABLE IF EXISTS postagens;
+    //             DROP TABLE IF EXISTS postagem_usuario;
+    //             DROP TABLE IF EXISTS turma_usuario;";
+    // }
 
     // Contrutor
     public function __construct($pdoClass) {
@@ -105,6 +126,9 @@ class InitDatabase {
         echo "<script language='javascript'> console.log('Tabela de postagens criada com sucesso!') </script>";
         $this->createTableTurmaUsuario($pdoClass);
         echo "<script language='javascript'> console.log('Tabela de turma_usuario criada com sucesso!') </script>";
+        $this->createTablePostagemUsuario($pdoClass);
+        echo "<script language='javascript'> console.log('Tabela de postagem_usuario criada com sucesso!') </script>";
+  
 
     }
 }
