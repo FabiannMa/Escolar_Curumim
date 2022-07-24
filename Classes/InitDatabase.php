@@ -140,7 +140,7 @@ class InitDatabase
             pro_id_fk INT(6) UNSIGNED NOT NULL,
             usu_id_fk INT(6) UNSIGNED NOT NULL,
             pro_usu_status INT(1) NOT NULL,
-            pro_usu_nota DECIMAL(2,1),
+            pro_usu_nota DECIMAL(3,1),
             data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         $pdo->query($sql);

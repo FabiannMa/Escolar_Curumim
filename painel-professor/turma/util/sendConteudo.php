@@ -19,7 +19,7 @@ if ($preRequisito == "" || $preRequisito == "0") {
 }
 
 
-$sql = "INSERT INTO postagens (pos_titulo, pos_texto, top_id_fk, pos_status, pos_imagem) VALUES ('$title', '$conteudo', '$topico', '$status', 'default.png')";
+$sql = "INSERT INTO postagens (pos_titulo, pos_texto, top_id_fk, pos_status, pos_imagem, pos_requisito) VALUES ('$title', '$conteudo', '$topico', '$status', 'default.png', '$preRequisito')";
 $pdo->query($sql);
 
 // Cadastra a prova do conteudo
@@ -55,8 +55,6 @@ foreach ($questoesSelecionadas as $questao) {
     $sql = "INSERT INTO prova_questao (pro_id_fk, que_id_fk) VALUES ('$prova_id', '$questao')";
     $pdo->query($sql);
 }
-
-
 
 // Redireciona para a página de listagem
 echo "<script> window.location.href = '../'; </script>";

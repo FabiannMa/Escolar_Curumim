@@ -49,3 +49,25 @@ foreach ($QuestoesArray as $questao) {
 }
 
 echo "Nota: " . $pontos. "/10";
+
+if ($pontos >=6){
+    $status = 1;
+}else{
+    $status = 0;
+}
+
+// Cadastra a nota no banco de dados
+$sql = "INSERT INTO prova_usuario (pro_id_fk, usu_id_fk, pro_usu_status, pro_usu_nota ) VALUES ($idAluno, $idProva, $status, $pontos)";
+$pdo->query($sql);
+
+// Muda status da postagem para finalizada
+$sql = "SELECT * FROM prova_postagem WHERE pro_id_fk = $idProva";
+$postagem = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+$postagem = $postagem[0]['pos_id_fk'];
+
+$sql = "UPDATE postagens SET pos_status = $status WHERE pos_id_pk = $postagem";
+$pdo->query($sql);
+
+
+echo "<script language='javascript'> window.location='../../../../painel-aluno' </script>";
+?>
