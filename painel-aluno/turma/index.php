@@ -200,20 +200,20 @@ require_once("../utils/verifyAuth.php");
         <div class="popup">
             <div class="popHeader">
 
-                <iframe src="frames/iframetitle.php" frameborder="0" style="width: 100%;  height:80px"></iframe>
+                <iframe src="frames/iframetitle.php" frameborder="0" style="width: 100%;  height:80px" id="iframeTitle"></iframe>
 
                 <div class="close" onclick="closePopup()">&times;</div>
             </div>
             <div class="popBody">
                 <div class="keywords">
-                    <iframe src="frames/iframeKey.php" frameborder="0" style=" height:50px"></iframe>
+                    <iframe src="frames/iframeKey.php" frameborder="0" style=" height:50px" id="iframeKeys"></iframe>
                 </div>
                 <div class="popText">
-                    <iframe src="frames/iframeConteudo.php" frameborder="0" style="width: 100%; height:100%; "></iframe>
+                    <iframe src="frames/iframeConteudo.php" frameborder="0" style="width: 100%; height:100%;" id="iframeContent"></iframe>
                 </div>
             </div>
             <div class="popFooter">
-                <button class="btn btn-primary" id="btn-ok">Iniciar Avaliação</button>
+                <button class="btn btn-primary" id="btn-ok" onclick="iniciarProva()">Iniciar Avaliação</button>
             </div>
         </div>
     </div>
@@ -638,44 +638,52 @@ require_once("../utils/verifyAuth.php");
     }
 </style>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
+
+
+    
     $(document).ready(function() {
         createCookies("idPost", "", "10");
     });
 
-    function createCookies(name, value, days) {
-        var expire;
-
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expire = "; expires=" + date.toGMTString();
-        } else {
-            expire = "";
-        }
-
-        document.cookie = escape(name) + "=" + escape(value) + expire + "; path=/";
-    }
     var idPost = 0;
 
     function openPopup(url) {
         var pop = document.getElementById("popConteudo");
         pop.style.display = "flex";
         pop.style.transform = "scale(1)";
-
-
-
-
+        idPost = url;
+        // Change the url of the iframe to the desired page
+        var iframeTitle = document.getElementById("iframeTitle");
+        iframeTitle.src = "frames/iframetitle.php?id=" + url;
+        var iframeConteudo = document.getElementById("iframeContent");
+        iframeConteudo.src = "frames/iframeConteudo.php?id=" + url;
+        var iframeKeys = document.getElementById("iframeKeys");
+        iframeKeys.src = "frames/iframeKey.php?id=" + url;
     }
-
-
     function closePopup() {
         var pop = document.getElementById("popConteudo");
         pop.style.transform = "scale(0)";
         pop.style.display = "none";
+    }
+    function iniciarProva(){
+        // Post method redirect
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "Avaliacao/");
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", "id");
+        hiddenField.setAttribute("value", idPost);
+        form.appendChild(hiddenField);
+        document.body.appendChild(form);
+        form.submit();
 
     }
+    
+    
+
 </script>
 
 <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>

@@ -5,6 +5,7 @@ require_once("../../conexao.php");
 $pag = @$_GET["pag"];
 $menu_atividade = "AtviMenu";
 $topicos = "TopMain";
+$questoes = "QuestoesMenuSend";
  
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios where id = '$_SESSION[id_usuario]'");
@@ -116,6 +117,7 @@ $nome_turma = @$res[0]['tur_name'];
                         <a class="collapse-item" href="../material-aula/atividade.php">Criar nova atividade</a>
                         <a class="collapse-item" href="../material-aula/lista-atividades.php">Mostrar atividades criadas</a>
                         <a class="collapse-item" href="../material-aula/boletim.php">Adicionar notas</a>
+                        <a class="collapse-item" href="<?php echo $_SERVER['REQUEST_URI']."&pag=".$questoes ?>"> Questões</a>
 
                     </div>
                 </div>
@@ -389,6 +391,8 @@ $nome_turma = @$res[0]['tur_name'];
                         @include_once "enviarAtividade.php";
                     } elseif ($pag == $topicos) {
                         @include_once "topicos.php";
+                    } elseif ($pag == $questoes){
+                        @include_once "enviarQuestao.php";
                     }
                         
 
