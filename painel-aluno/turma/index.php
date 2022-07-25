@@ -200,20 +200,20 @@ require_once("../utils/verifyAuth.php");
         <div class="popup">
             <div class="popHeader">
 
-                <iframe src="frames/iframetitle.php" frameborder="0" style="width: 100%;  height:80px"></iframe>
+                <iframe src="frames/iframetitle.php" frameborder="0" style="width: 100%;  height:80px" id="iframeTitle"></iframe>
 
                 <div class="close" onclick="closePopup()">&times;</div>
             </div>
             <div class="popBody">
                 <div class="keywords">
-                    <iframe src="frames/iframeKey.php" frameborder="0" style=" height:50px"></iframe>
+                    <iframe src="frames/iframeKey.php" frameborder="0" style=" height:50px" id="iframeKeys"></iframe>
                 </div>
                 <div class="popText">
-                    <iframe src="frames/iframeConteudo.php" frameborder="0" style="width: 100%; height:100%; "></iframe>
+                    <iframe src="frames/iframeConteudo.php" frameborder="0" style="width: 100%; height:100%;" id="iframeContent"></iframe>
                 </div>
             </div>
             <div class="popFooter">
-                <button class="btn btn-primary" id="btn-ok">Iniciar Avaliação</button>
+                <button class="btn btn-primary" id="btn-ok" onclick="iniciarProva()">Iniciar Avaliação</button>
             </div>
         </div>
     </div>
@@ -508,119 +508,210 @@ require_once("../utils/verifyAuth.php");
 
                         </div>
 
-                        <!-- End of Page Wrapper -->
+
+                        <!-- Provas -->
+                        <!-- Titulo da pagina -->
+                        <div class="card">
+                            <!-- Card Header -->
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary text-2xl">
+                                    Provas
+                                </h6>
+                            </div>
+
+                            <?php
+                            // Recupera provas do aluno
+                            $sql = "SELECT * FROM provas WHERE pro_id_pk IN (SELECT pro_id_fk FROM prova_usuario WHERE usu_id_fk = $_SESSION[id_usuario])";
+                            $query = $pdo->query($sql);
+                            $provas = $query->fetchAll();
+
+                            foreach ($provas as $prova) {
+                                $idProva = $prova['pro_id_pk'];
+                                $sql = "SELECT * FROM prova_usuario WHERE pro_id_fk = $idProva AND usu_id_fk = $_SESSION[id_usuario]";
+                                $query = $pdo->query($sql);
+                                $provaUsuario = $query->fetchAll();
+
+                            ?>
+
+                                <div class="card shadow mb-4">
+                                    <!-- Card Header -->
+                                    <div class="card-header py-3 flex justify-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">
+                                            <?php echo $prova['pro_name']; ?>
+                                        </h6>
+                                    </div>
+                                    <!-- Card Body -->
+                                    <div class="card-body">
+                                        <div class="progress-container">
+                                            <div class="flex conteudobox" style=" width:100%; justify-content: center; align-items: center; flex-direction: column;">
+                                                <?php
+
+                                                foreach ($provaUsuario as $result) {
+
+                                                ?>
+
+                                                    <div class="m-0 font-weight-bold text-primary flex " style=" width:90%; justify-content:space-around;">
+                                                        <div>
+                                                            Data de realização:
+                                                            <?php
+                                                            $data = new DateTime($result['data_cadastro']);
+                                                            echo $data->format('d/m/Y');
+                                                            $hora = new DateTime($result['data_cadastro']);
+                                                            echo ' - ' . $hora->format('H:i');
+                                                            ?>
+                                                        </div>
+                                                        <div class="pd-12 text-lg font-bold
+                                                        <?php
+
+                                                        if ($result['pro_usu_nota'] >= 6) {
+                                                            echo 'text-green-600';
+                                                        } else {
+                                                            echo 'text-rose-500';
+                                                        }
+                                                        ?>
+                                                        ">
+
+                                                            <?php echo $result['pro_usu_nota'] ?> - <?php
+
+                                                                                                    if ($result['pro_usu_nota'] >= 6) {
+                                                                                                        echo 'Aprovado';
+                                                                                                    } else {
+                                                                                                        echo 'Reprovado';
+                                                                                                    }
+                                                                                                    ?>
+
+                                                        </div>
+                                                    </div>
+
+
+                                                <?php
+                                                }
+                                                ?>
 
 
 
-                        <!-- Scroll to Top Button-->
-                        <a class="scroll-to-top rounded" href="#page-top">
-                            <i class="fas fa-angle-up"></i>
-                        </a>
-
-
-
-
-                        <!--  Modal Perfil-->
-                        <div class="modal fade" id="ModalPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Editar Perfil</h5>
-                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">×</span>
-                                        </button>
+                                            </div>
+                                        </div>
                                     </div>
 
+                                <?php
+                            }
+                                ?>
+                                </div>
+
+                                <!-- End of Page Wrapper -->
 
 
-                                    <form id="form-perfil" method="POST" enctype="multipart/form-data">
-                                        <div class="modal-body">
 
-                                            <div class="row">
-                                                <div class="col-md-6 col-sm-12">
-                                                    <div class="form-group">
-                                                        <label>Nome</label>
-                                                        <input value="<?php echo $nome ?>" type="text" class="form-control" id="nome" name="nome" placeholder="Nome">
-                                                    </div>
+                                <!-- Scroll to Top Button-->
+                                <a class="scroll-to-top rounded" href="#page-top">
+                                    <i class="fas fa-angle-up"></i>
+                                </a>
 
-                                                    <div class="form-group">
-                                                        <label>CPF</label>
-                                                        <input value="<?php echo $cpf ?>" type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
-                                                    </div>
 
-                                                    <div class="form-group">
-                                                        <label>Email</label>
-                                                        <input value="<?php echo $email ?>" type="email" class="form-control" id="email" name="email" placeholder="Email">
-                                                    </div>
 
-                                                    <div class="form-group">
-                                                        <label>Senha</label>
-                                                        <input value="" type="password" class="form-control" id="text" name="senha" placeholder="Senha">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-12">
-                                                    <div class="col-md-12 form-group">
-                                                        <label>Foto</label>
-                                                        <input value="<?php echo $img ?>" type="file" class="form-control-file" id="imagem" name="imagem" onchange="carregarImg();">
 
-                                                    </div>
-                                                    <div class="col-md-12 mb-2">
-                                                        <img src="../img/profiles/<?php echo $img ?>" alt="Carregue sua Imagem" id="target" width="100%">
-                                                    </div>
-                                                </div>
+                                <!--  Modal Perfil-->
+                                <div class="modal fade" id="ModalPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Editar Perfil</h5>
+                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
                                             </div>
 
 
 
-                                            <small>
-                                                <div id="mensagem" class="mr-4">
+                                            <form id="form-perfil" method="POST" enctype="multipart/form-data">
+                                                <div class="modal-body">
+
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-12">
+                                                            <div class="form-group">
+                                                                <label>Nome</label>
+                                                                <input value="<?php echo $nome ?>" type="text" class="form-control" id="nome" name="nome" placeholder="Nome">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label>CPF</label>
+                                                                <input value="<?php echo $cpf ?>" type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label>Email</label>
+                                                                <input value="<?php echo $email ?>" type="email" class="form-control" id="email" name="email" placeholder="Email">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label>Senha</label>
+                                                                <input value="" type="password" class="form-control" id="text" name="senha" placeholder="Senha">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-12">
+                                                            <div class="col-md-12 form-group">
+                                                                <label>Foto</label>
+                                                                <input value="<?php echo $img ?>" type="file" class="form-control-file" id="imagem" name="imagem" onchange="carregarImg();">
+
+                                                            </div>
+                                                            <div class="col-md-12 mb-2">
+                                                                <img src="../img/profiles/<?php echo $img ?>" alt="Carregue sua Imagem" id="target" width="100%">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+                                                    <small>
+                                                        <div id="mensagem" class="mr-4">
+
+                                                        </div>
+                                                    </small>
+
+
 
                                                 </div>
-                                            </small>
+                                                <div class="modal-footer">
 
+
+
+                                                    <input value="<?php echo $idUsuario ?>" type="hidden" name="txtid" id="txtid">
+                                                    <input value="<?php echo $cpf ?>" type="hidden" name="antigo" id="antigo">
+
+                                                    <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" name="btn-salvar-perfil" id="btn-salvar-perfil" class="btn btn-primary">Salvar</button>
+                                                </div>
+                                            </form>
 
 
                                         </div>
-                                        <div class="modal-footer">
-
-
-
-                                            <input value="<?php echo $idUsuario ?>" type="hidden" name="txtid" id="txtid">
-                                            <input value="<?php echo $cpf ?>" type="hidden" name="antigo" id="antigo">
-
-                                            <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                            <button type="submit" name="btn-salvar-perfil" id="btn-salvar-perfil" class="btn btn-primary">Salvar</button>
-                                        </div>
-                                    </form>
-
-
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
 
 
-                        <!-- Core plugin JavaScript-->
-                        <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+                                <!-- Core plugin JavaScript-->
+                                <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
-                        <!-- Custom scripts for all pages-->
-                        <script src="../js/sb-admin-2.min.js"></script>
+                                <!-- Custom scripts for all pages-->
+                                <script src="../js/sb-admin-2.min.js"></script>
 
-                        <!-- Page level plugins -->
-                        <script src="../vendor/chart.js/Chart.min.js"></script>
+                                <!-- Page level plugins -->
+                                <script src="../vendor/chart.js/Chart.min.js"></script>
 
-                        <!-- Page level custom scripts -->
-                        <script src="../js/demo/chart-area-demo.js"></script>
-                        <script src="../js/demo/chart-pie-demo.js"></script>
+                                <!-- Page level custom scripts -->
+                                <script src="../js/demo/chart-area-demo.js"></script>
+                                <script src="../js/demo/chart-pie-demo.js"></script>
 
-                        <!-- Page level plugins -->
-                        <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-                        <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+                                <!-- Page level plugins -->
+                                <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
+                                <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
-                        <!-- Page level custom scripts -->
-                        <script src="../js/demo/datatables-demo.js"></script>
-                        <div class="modal">
-                            <!-- Place at bottom of page -->
-                        </div>
+                                <!-- Page level custom scripts -->
+                                <script src="../js/demo/datatables-demo.js"></script>
+                                <div class="modal">
+                                    <!-- Place at bottom of page -->
+                                </div>
 
 
 
@@ -638,42 +729,46 @@ require_once("../utils/verifyAuth.php");
     }
 </style>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         createCookies("idPost", "", "10");
     });
 
-    function createCookies(name, value, days) {
-        var expire;
-
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expire = "; expires=" + date.toGMTString();
-        } else {
-            expire = "";
-        }
-
-        document.cookie = escape(name) + "=" + escape(value) + expire + "; path=/";
-    }
     var idPost = 0;
 
     function openPopup(url) {
         var pop = document.getElementById("popConteudo");
         pop.style.display = "flex";
         pop.style.transform = "scale(1)";
-
-
-
-
+        idPost = url;
+        // Change the url of the iframe to the desired page
+        var iframeTitle = document.getElementById("iframeTitle");
+        iframeTitle.src = "frames/iframetitle.php?id=" + url;
+        var iframeConteudo = document.getElementById("iframeContent");
+        iframeConteudo.src = "frames/iframeConteudo.php?id=" + url;
+        var iframeKeys = document.getElementById("iframeKeys");
+        iframeKeys.src = "frames/iframeKey.php?id=" + url;
     }
-
 
     function closePopup() {
         var pop = document.getElementById("popConteudo");
         pop.style.transform = "scale(0)";
         pop.style.display = "none";
+    }
+
+    function iniciarProva() {
+        // Post method redirect
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "Avaliacao/");
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", "id");
+        hiddenField.setAttribute("value", idPost);
+        form.appendChild(hiddenField);
+        document.body.appendChild(form);
+        form.submit();
 
     }
 </script>
