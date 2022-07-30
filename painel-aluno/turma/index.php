@@ -1,12 +1,20 @@
+<!-- #region Conection -->
 <?php
 require_once("../../conexao.php");
 
 // Verificar se o usuário está logado antes de mostrar o conteúdo
 require_once("../utils/verifyAuth.php");
 
+//RECUPERAR DADOS DO USUÁRIO
+$query = $pdo->query("SELECT * FROM usuarios where id = '$_SESSION[id_usuario]'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$nome_usu = @$res[0]['nome'];
+$cpf_usu = @$res[0]['cpf'];
+$email_usu = @$res[0]['email'];
+$idUsuario = @$res[0]['id'];
 ?>
 
-
+<!-- #endregion -->
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -192,6 +200,14 @@ require_once("../utils/verifyAuth.php");
             transition: all 0.5s ease;
             transform: scale(0);
         }
+        .completed{
+            /* Green color */
+            background-color: rgb(0, 150, 65, .2); 
+            border-color: #4CAF50;
+            color : #4CAF50;
+            font-size: 16pt;
+            
+        }
     </style>
 </head>
 
@@ -227,7 +243,7 @@ require_once("../utils/verifyAuth.php");
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.php">
                 <div class="sidebar-brand-text mx-3">ALUNO</div>
             </a>
 
@@ -251,7 +267,7 @@ require_once("../utils/verifyAuth.php");
                 echo '<li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse', $topicoFormatado, '" aria-expanded="true" aria-controls="collapse', $topicoFormatado, '">
                         <i class="fas fa-fw fa-folder"></i>
-                        <span>AlO SOM</span>
+                        <span>  </span>
                     </a>
                     ';
             }
@@ -314,7 +330,7 @@ require_once("../utils/verifyAuth.php");
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo "bizu" ?></span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $nome_usu ?></span>
                                 <img class="img-profile rounded-circle" src="../../img/sem-foto.jpg">
 
                             </a>
@@ -326,7 +342,7 @@ require_once("../utils/verifyAuth.php");
                                 </a>
 
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="../logout.php">
+                                <a class="dropdown-item" href="../../logout.php">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-danger"></i>
                                     Sair
                                 </a>
@@ -357,6 +373,7 @@ require_once("../utils/verifyAuth.php");
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                        <!-- TODO: Adicionar Nome da turma aqui -->
                                                         <?php echo "Turma 2002" ?>
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
@@ -479,20 +496,31 @@ require_once("../utils/verifyAuth.php");
                                 echo '<div class="progress-container">';
                                 foreach ($conteudos as $conteudo) {
                             ?>
-                                    <?php if ($conteudo['pos_status'] == 1 || $conteudo['pos_status'] == 3) { ?>
+                                    <?php
+                                        // recupera a relação do conteudo com o usuario
+                                        $sql2 = "SELECT * FROM postagem_usuario WHERE usu_id_fk = $_SESSION[id_usuario] AND pos_id_fk = $conteudo[pos_id_pk]";
+                                        $query2 = $pdo->query($sql2);
+                                        $relacao = $query2->fetchAll();
+                                        $StatusConteudo = $relacao[0]['pos_usu_status'];
+
+                                    ?>
+                                    <?php if ($StatusConteudo == 1 || $StatusConteudo == 2) { ?>
                                         <a onclick="openPopup(<?php echo $conteudo['pos_id_pk']; ?>)">
                                         <?php } ?>
                                         <div class="flex conteudobox" style="justify-content: center; align-items: center; flex-direction: column;">
-                                            <div class="circle <?php if ($conteudo['pos_status'] == 1) echo 'active' ?> ">
-                                                <?php if ($conteudo['pos_status'] == 1) echo 'Iniciar' ?>
-                                                <?php if ($conteudo['pos_status'] == 2) echo '<i class="fas fa-lock"></i>' ?>
-                                                <?php if ($conteudo['pos_status'] == 3) echo '<i class="fas fa-check"></i>' ?>
+                                            <div class="circle <?php 
+                                                if ($StatusConteudo == 1){ echo 'active';} 
+                                                if ($StatusConteudo == 2){ echo 'completed';} ?>">
+                  
+                                                <?php if ($StatusConteudo == 1) echo 'Iniciar' ?>
+                                                <?php if ($StatusConteudo == 0) echo '<i class="fas fa-lock"></i>' ?>
+                                                <?php if ($StatusConteudo == 2) echo '<i class="fas fa-check"></i>' ?>
                                             </div>
                                             <?php echo $conteudo['pos_titulo']; ?>
 
                                         </div>
                                         <?php
-                                        if ($conteudo['pos_status'] == 1 || $conteudo['pos_status'] == 3) {
+                                        if ($StatusConteudo == 1 || $StatusConteudo == 2) {
                                         ?>
                                         </a>
                             <?php

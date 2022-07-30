@@ -65,9 +65,27 @@ $sql = "SELECT * FROM prova_postagem WHERE pro_id_fk = $idProva";
 $postagem = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 $postagem = $postagem[0]['pos_id_fk'];
 
-$sql = "UPDATE postagens SET pos_status = $status WHERE pos_id_pk = $postagem";
+if ($status == 1) {
+    $statusUso = 2;
+}else{
+    $statusUso = 1;
+}
+// Muda status da postagem para finalizada
+$sql = "UPDATE postagem_usuario SET pos_usu_status = $statusUso WHERE pos_id_fk = $postagem";
 $pdo->query($sql);
 
+if ($status == 1) {
+    // Libera o próximo conteúdo
+    $sql = "SELECT * FROM postagens WHERE pos_requisito_fk = $postagem";
+    $proximoConteudo = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    
+    foreach ($proximoConteudo as $key => $value) {
+        $id = $value['pos_id_pk'];
+        $sql = "UPDATE postagem_usuario SET pos_usu_status = 1 WHERE pos_id_fk = $id";
+        $pdo->query($sql);
+    }
+    
+}
 
-echo "<script language='javascript'> window.location='../../../../painel-aluno' </script>";
+ echo "<script language='javascript'> window.location='../../../../painel-aluno' </script>";
 ?>
