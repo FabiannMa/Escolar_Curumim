@@ -1,4 +1,3 @@
-<!-- #region Conection -->
 <?php
 require_once("../../conexao.php");
 
@@ -12,9 +11,15 @@ $nome_usu = @$res[0]['nome'];
 $cpf_usu = @$res[0]['cpf'];
 $email_usu = @$res[0]['email'];
 $idUsuario = @$res[0]['id'];
+
+// Recupera dados da turma 
+$query = $pdo->query("SELECT * FROM turmas where tur_id_pk = '$_GET[id]'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$nome_turma = @$res[0]['tur_name'];
+
 ?>
 
-<!-- #endregion -->
+
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -200,13 +205,14 @@ $idUsuario = @$res[0]['id'];
             transition: all 0.5s ease;
             transform: scale(0);
         }
-        .completed{
+
+        .completed {
             /* Green color */
-            background-color: rgb(0, 150, 65, .2); 
+            background-color: rgb(0, 150, 65, .2);
             border-color: #4CAF50;
-            color : #4CAF50;
+            color: #4CAF50;
             font-size: 16pt;
-            
+
         }
     </style>
 </head>
@@ -236,9 +242,10 @@ $idUsuario = @$res[0]['id'];
 
     </div>
     </div>
+
     <!-- Page Wrapper -->
     <div id="wrapper">
-
+        <!-- #region Menu da Página -->
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -307,10 +314,8 @@ $idUsuario = @$res[0]['id'];
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
@@ -319,14 +324,8 @@ $idUsuario = @$res[0]['id'];
                         <i class="fa fa-bars"></i>
                     </button>
                     <img class="mt-2" src="../../img/logo1.png" width="160">
-
-
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
-
-
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -348,11 +347,11 @@ $idUsuario = @$res[0]['id'];
                                 </a>
                             </div>
                         </li>
-
                     </ul>
-
                 </nav>
                 <!-- End of Topbar -->
+
+                <!-- #endregion  -->
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
@@ -361,20 +360,20 @@ $idUsuario = @$res[0]['id'];
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">
-                                <?php echo "Turmas 2002" ?>
+                                <?php echo $nome_turma ?>
                             </h6>
                         </div>
                         <div class="card-body">
                             <!-- Menu de Opções em cards -->
                             <div class="row">
-                                <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(1)" style="cursor: pointer">
                                     <div class="card border-left-primary shadow h-100 py-2">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                         <!-- TODO: Adicionar Nome da turma aqui -->
-                                                        <?php echo "Turma 2002" ?>
+                                                        <?php echo $nome_turma ?>
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo "Conteúdos" ?>
@@ -387,13 +386,13 @@ $idUsuario = @$res[0]['id'];
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(2)" style="cursor: pointer">
                                     <div class="card border-left-success shadow h-100 py-2">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                        <?php echo "Turma 2002" ?>
+                                                        <?php echo $nome_turma ?>
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo "Fórum" ?>
@@ -406,13 +405,13 @@ $idUsuario = @$res[0]['id'];
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(3)" style="cursor: pointer">
                                     <div class="card border-left-info shadow h-100 py-2">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                        <?php echo "Turma 2002" ?>
+                                                        <?php echo $nome_turma ?>
                                                     </div>
                                                     <div class="row no-gutters align-items-center">
                                                         <div class="col-auto">
@@ -429,13 +428,13 @@ $idUsuario = @$res[0]['id'];
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(4)" style="cursor: pointer">
                                     <div class="card border-left-warning shadow h-100 py-2">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                        <?php echo "Turma 2002" ?>
+                                                        <?php echo $nome_turma ?>
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo "Desempenho" ?>
@@ -465,7 +464,7 @@ $idUsuario = @$res[0]['id'];
 
                     <div>
                         <!-- Titulo da pagina -->
-                        <div class="card">
+                        <div class="card" id="conteudosContainer">
                             <!-- Card Header -->
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary text-2xl">
@@ -497,21 +496,25 @@ $idUsuario = @$res[0]['id'];
                                 foreach ($conteudos as $conteudo) {
                             ?>
                                     <?php
-                                        // recupera a relação do conteudo com o usuario
-                                        $sql2 = "SELECT * FROM postagem_usuario WHERE usu_id_fk = $_SESSION[id_usuario] AND pos_id_fk = $conteudo[pos_id_pk]";
-                                        $query2 = $pdo->query($sql2);
-                                        $relacao = $query2->fetchAll();
-                                        $StatusConteudo = $relacao[0]['pos_usu_status'];
+                                    // recupera a relação do conteudo com o usuario
+                                    $sql2 = "SELECT * FROM postagem_usuario WHERE usu_id_fk = $_SESSION[id_usuario] AND pos_id_fk = $conteudo[pos_id_pk]";
+                                    $query2 = $pdo->query($sql2);
+                                    $relacao = $query2->fetchAll();
+                                    $StatusConteudo = $relacao[0]['pos_usu_status'];
 
                                     ?>
                                     <?php if ($StatusConteudo == 1 || $StatusConteudo == 2) { ?>
                                         <a onclick="openPopup(<?php echo $conteudo['pos_id_pk']; ?>)">
                                         <?php } ?>
                                         <div class="flex conteudobox" style="justify-content: center; align-items: center; flex-direction: column;">
-                                            <div class="circle <?php 
-                                                if ($StatusConteudo == 1){ echo 'active';} 
-                                                if ($StatusConteudo == 2){ echo 'completed';} ?>">
-                  
+                                            <div class="circle <?php
+                                                                if ($StatusConteudo == 1) {
+                                                                    echo 'active';
+                                                                }
+                                                                if ($StatusConteudo == 2) {
+                                                                    echo 'completed';
+                                                                } ?>">
+
                                                 <?php if ($StatusConteudo == 1) echo 'Iniciar' ?>
                                                 <?php if ($StatusConteudo == 0) echo '<i class="fas fa-lock"></i>' ?>
                                                 <?php if ($StatusConteudo == 2) echo '<i class="fas fa-check"></i>' ?>
@@ -539,7 +542,7 @@ $idUsuario = @$res[0]['id'];
 
                         <!-- Provas -->
                         <!-- Titulo da pagina -->
-                        <div class="card">
+                        <div class="card" id="provasContainer">
                             <!-- Card Header -->
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary text-2xl">
@@ -626,120 +629,145 @@ $idUsuario = @$res[0]['id'];
                             }
                                 ?>
                                 </div>
+                        </div>
 
-                                <!-- End of Page Wrapper -->
+                        <!-- Forum -->
+                        <!-- Titulo da pagina -->
+                        <div class="card" id="forumContainer">
+                            <!-- Card Header -->
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary text-2xl">
+                                    Forum
+                                </h6>
+                            </div>
+                        </div>
+
+                        <!-- Desempenho -->
+                        <!-- Titulo da pagina -->
+                        <div class="card" id="desempenhoContainer">
+                            <!-- Card Header -->
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary text-2xl">
+                                    Desempenho
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- End of Page Wrapper -->
 
 
 
-                                <!-- Scroll to Top Button-->
-                                <a class="scroll-to-top rounded" href="#page-top">
-                                    <i class="fas fa-angle-up"></i>
-                                </a>
+                    <!-- Scroll to Top Button-->
+                    <a class="scroll-to-top rounded" href="#page-top">
+                        <i class="fas fa-angle-up"></i>
+                    </a>
 
 
 
 
-                                <!--  Modal Perfil-->
-                                <div class="modal fade" id="ModalPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Editar Perfil</h5>
-                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">×</span>
-                                                </button>
+                    <!--  Modal Perfil-->
+                    <div class="modal fade" id="ModalPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Editar Perfil</h5>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+
+
+
+                                <form id="form-perfil" method="POST" enctype="multipart/form-data">
+                                    <div class="modal-body">
+
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Nome</label>
+                                                    <input value="<?php echo $nome ?>" type="text" class="form-control" id="nome" name="nome" placeholder="Nome">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>CPF</label>
+                                                    <input value="<?php echo $cpf ?>" type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Email</label>
+                                                    <input value="<?php echo $email ?>" type="email" class="form-control" id="email" name="email" placeholder="Email">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Senha</label>
+                                                    <input value="" type="password" class="form-control" id="text" name="senha" placeholder="Senha">
+                                                </div>
                                             </div>
-
-
-
-                                            <form id="form-perfil" method="POST" enctype="multipart/form-data">
-                                                <div class="modal-body">
-
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                <label>Nome</label>
-                                                                <input value="<?php echo $nome ?>" type="text" class="form-control" id="nome" name="nome" placeholder="Nome">
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label>CPF</label>
-                                                                <input value="<?php echo $cpf ?>" type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label>Email</label>
-                                                                <input value="<?php echo $email ?>" type="email" class="form-control" id="email" name="email" placeholder="Email">
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label>Senha</label>
-                                                                <input value="" type="password" class="form-control" id="text" name="senha" placeholder="Senha">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-12">
-                                                            <div class="col-md-12 form-group">
-                                                                <label>Foto</label>
-                                                                <input value="<?php echo $img ?>" type="file" class="form-control-file" id="imagem" name="imagem" onchange="carregarImg();">
-
-                                                            </div>
-                                                            <div class="col-md-12 mb-2">
-                                                                <img src="../img/profiles/<?php echo $img ?>" alt="Carregue sua Imagem" id="target" width="100%">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-
-                                                    <small>
-                                                        <div id="mensagem" class="mr-4">
-
-                                                        </div>
-                                                    </small>
-
-
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="col-md-12 form-group">
+                                                    <label>Foto</label>
+                                                    <input value="<?php echo $img ?>" type="file" class="form-control-file" id="imagem" name="imagem" onchange="carregarImg();">
 
                                                 </div>
-                                                <div class="modal-footer">
-
-
-
-                                                    <input value="<?php echo $idUsuario ?>" type="hidden" name="txtid" id="txtid">
-                                                    <input value="<?php echo $cpf ?>" type="hidden" name="antigo" id="antigo">
-
-                                                    <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                                    <button type="submit" name="btn-salvar-perfil" id="btn-salvar-perfil" class="btn btn-primary">Salvar</button>
+                                                <div class="col-md-12 mb-2">
+                                                    <img src="../img/profiles/<?php echo $img ?>" alt="Carregue sua Imagem" id="target" width="100%">
                                                 </div>
-                                            </form>
-
-
+                                            </div>
                                         </div>
+
+
+
+                                        <small>
+                                            <div id="mensagem" class="mr-4">
+
+                                            </div>
+                                        </small>
+
+
+
                                     </div>
-                                </div>
+                                    <div class="modal-footer">
 
 
-                                <!-- Core plugin JavaScript-->
-                                <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
-                                <!-- Custom scripts for all pages-->
-                                <script src="../js/sb-admin-2.min.js"></script>
+                                        <input value="<?php echo $idUsuario ?>" type="hidden" name="txtid" id="txtid">
+                                        <input value="<?php echo $cpf ?>" type="hidden" name="antigo" id="antigo">
 
-                                <!-- Page level plugins -->
-                                <script src="../vendor/chart.js/Chart.min.js"></script>
+                                        <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                        <button type="submit" name="btn-salvar-perfil" id="btn-salvar-perfil" class="btn btn-primary">Salvar</button>
+                                    </div>
+                                </form>
 
-                                <!-- Page level custom scripts -->
-                                <script src="../js/demo/chart-area-demo.js"></script>
-                                <script src="../js/demo/chart-pie-demo.js"></script>
 
-                                <!-- Page level plugins -->
-                                <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-                                <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+                            </div>
+                        </div>
+                    </div>
 
-                                <!-- Page level custom scripts -->
-                                <script src="../js/demo/datatables-demo.js"></script>
-                                <div class="modal">
-                                    <!-- Place at bottom of page -->
-                                </div>
+
+                    <!-- Core plugin JavaScript-->
+                    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+                    <!-- Custom scripts for all pages-->
+                    <script src="../js/sb-admin-2.min.js"></script>
+
+                    <!-- Page level plugins -->
+                    <script src="../vendor/chart.js/Chart.min.js"></script>
+
+                    <!-- Page level custom scripts -->
+                    <script src="../js/demo/chart-area-demo.js"></script>
+                    <script src="../js/demo/chart-pie-demo.js"></script>
+
+                    <!-- Page level plugins -->
+                    <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
+                    <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+                    <!-- Page level custom scripts -->
+                    <script src="../js/demo/datatables-demo.js"></script>
+                    <div class="modal">
+                        <!-- Place at bottom of page -->
+                    </div>
 
 
 
@@ -797,7 +825,42 @@ $idUsuario = @$res[0]['id'];
         form.appendChild(hiddenField);
         document.body.appendChild(form);
         form.submit();
+    }
 
+    // Paginação
+    var paginaconteudo = document.getElementById("conteudosContainer");
+    // paginaconteudo.style.display = "none";
+    
+    var paginaProvas = document.getElementById("provasContainer");
+    paginaProvas.style.display = "none";
+    var paginaForum = document.getElementById("forumContainer");
+    paginaForum.style.display = "none";
+    var paginaDesempenho = document.getElementById("desempenhoContainer");
+    paginaDesempenho.style.display = "none";
+
+
+    function switchPage(page) {
+        if (page == "1") {
+            paginaconteudo.style.display = "block";
+            paginaProvas.style.display = "none";
+            paginaForum.style.display = "none";
+            paginaDesempenho.style.display = "none";
+        } else if (page == "3") {
+            paginaconteudo.style.display = "none";
+            paginaProvas.style.display = "block";
+            paginaForum.style.display = "none";
+            paginaDesempenho.style.display = "none";
+        } else if (page == "2") {
+            paginaconteudo.style.display = "none";
+            paginaProvas.style.display = "none";
+            paginaForum.style.display = "block";
+            paginaDesempenho.style.display = "none";
+        } else if (page == "4") {
+            paginaconteudo.style.display = "none";
+            paginaProvas.style.display = "none";
+            paginaForum.style.display = "none";
+            paginaDesempenho.style.display = "block";
+        }
     }
 </script>
 
