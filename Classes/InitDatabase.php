@@ -18,6 +18,7 @@ class InitDatabase
             senha VARCHAR(50) NOT NULL,
             cpf VARCHAR(11) NOT NULL,
             nivel VARCHAR(30) NOT NULL,
+            foto VARCHAR(80),
             data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         $pdo->query($sql);
@@ -86,7 +87,7 @@ class InitDatabase
             tur_usu_id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             tur_id_fk INT(6),
             usu_id_fk INT(6),
-            data_cadastro TIMESTAMP 
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         $pdo->query($sql);
     }
