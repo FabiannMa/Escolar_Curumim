@@ -11,12 +11,43 @@ $nome_usu = @$res[0]['nome'];
 $cpf_usu = @$res[0]['cpf'];
 $email_usu = @$res[0]['email'];
 $idUsuario = @$res[0]['id'];
+$photo = @$res[0]['foto'];
 
 // Recupera dados da turma 
 $query = $pdo->query("SELECT * FROM turmas where tur_id_pk = '$_GET[id]'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $nome_turma = @$res[0]['tur_name'];
+$id_professor = @$res[0]['tur_id_professor'];
 
+$mensagensEnviadas = [];
+$mensagensRecebidas = [];
+
+$sql = "SELECT * FROM mensagens WHERE id_usu_fk = '$idUsuario'";
+$res = $pdo->query($sql);
+$mensagensEnviadas = $res->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = "SELECT * FROM mensagens WHERE id_usu_destinatario = '$idUsuario'";
+$res = $pdo->query($sql);
+$mensagensRecebidas = $res->fetchAll(PDO::FETCH_ASSOC);
+
+
+function atualizaMensagens()
+{
+    global $pdo;
+    global $idUsuario;
+    global $mensagensRecebidas;
+    global $mensagensEnviadas;
+
+    $sql = "SELECT * FROM mensagens WHERE id_usu_destinatario = '$idUsuario'";
+    $res = $pdo->query($sql);
+    $mensagensRecebidas = $res->fetchAll(PDO::FETCH_ASSOC);
+
+    $sql = "SELECT * FROM mensagens WHERE id_usu_fk = '$idUsuario'";
+    $res = $pdo->query($sql);
+    $mensagensEnviadas = $res->fetchAll(PDO::FETCH_ASSOC);
+
+    replotaMensagens();
+}
 ?>
 
 
@@ -73,6 +104,160 @@ $nome_turma = @$res[0]['tur_name'];
     </script>
 
     <style>
+        .messageModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-bottom: 20px;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            display: none;
+        }
+
+        .messageModal .card {
+            width: 100%;
+            max-width: 500px;
+            height: 85%;
+            background-color: #fff;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0px;
+        }
+
+        .messageModal .card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .messageModal .card .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+            width: 100%;
+            padding: 0px;
+        }
+
+        .messageModal .card .card-body .send {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            color: #f0f0f0;
+        }
+
+        .messageModal .card .card-body .messageArea {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            overflow-y: scroll;
+            height: calc(100% - 50px);
+        }
+
+        .messageModal .card .card-body .send input {
+            width: 100%;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 20px;
+            margin-right: 0;
+            font-size: 1.2rem;
+            color: #002aaa;
+            height: 50px;
+            border-color: #007fff;
+        }
+
+        .messageModal .card .card-body .send button {
+
+            border-radius: 5px;
+            padding: 10px;
+            margin: 20px;
+            margin-left: 0;
+            font-size: 1.2rem;
+            color: #fff;
+            height: 50px;
+            background-color: #007fff;
+        }
+
+
+        .messageModal .card .card-body .send input::placeholder {
+            color: #007fff;
+        }
+
+        .messageArea {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-y: scroll;
+            height: calc(100% - 50px);
+        }
+
+        .leftMessage {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            margin: 0;
+            background: #f0f0ff;
+            box-shadow: 0px 0px 10px #ccc;
+            width: 60%;
+            margin-left: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .rightMessage {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            margin: 0;
+            background: #007fff;
+            box-shadow: 0px 0px 10px #ccc;
+            width: 60%;
+            margin-right: 10px;
+            margin-top: 10px;
+            margin-left: calc(40% - 10px);
+            padding: 10px;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .rightMessage .messageHeaderRight * {
+            color: #fff !important;
+        }
+
+        .messageHeader img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+
+        }
+
+        .messageHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         :root {
             --line-border-fill: #3498db;
             --line-border-empty: #e0e0e0;
@@ -214,6 +399,19 @@ $nome_turma = @$res[0]['tur_name'];
             font-size: 16pt;
 
         }
+
+        .img-profile {
+
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
+
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -330,7 +528,7 @@ $nome_turma = @$res[0]['tur_name'];
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $nome_usu ?></span>
-                                <img class="img-profile rounded-circle" src="../../img/sem-foto.jpg">
+                                <img class="img-profile rounded-circle" src="../../img/profilepics/<?php echo $photo ?>">
 
                             </a>
                             <!-- Dropdown - User Information -->
@@ -356,6 +554,61 @@ $nome_turma = @$res[0]['tur_name'];
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+
+                    <!-- Card do professor -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <?php echo "Informações do professor" ?>
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <?php
+                            $sql = "SELECT * FROM usuarios WHERE id ='$id_professor'";
+                            $result = $pdo->query($sql);
+                            $row = $result->fetch();
+
+                            $nome_professor = $row['nome'];
+                            $email_professor = $row['email'];
+                            $foto_professor = $row['foto'];
+                            ?>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <img class="img-profile rounded-circle" src="../../img/profilepics/<?php echo $foto_professor ?>">
+
+                                </div>
+                                <div class="col-md-8 ">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <?php echo $nome_professor ?>
+                                    </h6>
+                                    <p>
+                                        <?php echo $email_professor ?>
+                                    </p>
+                                </div>
+                                <div class="col-md-2" onclick="onOffChat()">
+                                    <a class="btn btn-primary btn-icon-split ">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span>
+                                        <span class="text text-white">
+                                            Enviar mensagem
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+                    <!-- /.container-fluid -->
                     <!-- Card da pagina -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
@@ -460,9 +713,9 @@ $nome_turma = @$res[0]['tur_name'];
 
 
                     </div>
-                    <!-- /.container-fluid -->
 
                     <div>
+
                         <!-- Titulo da pagina -->
                         <div class="card" id="conteudosContainer">
                             <!-- Card Header -->
@@ -768,7 +1021,135 @@ $nome_turma = @$res[0]['tur_name'];
                     <div class="modal">
                         <!-- Place at bottom of page -->
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 
+
+
+    <div class="messageModal" id="chat">
+
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary text-2xl">
+                    Mensagem
+                </h6>
+                <a href="#" class="close" onclick="onOffChat()">
+                    <span aria-hidden="true">&times;</span>
+                </a>
+            </div>
+
+            <div class="card-body">
+
+                <div class="messageArea">
+                    <?php
+                    atualizaMensagens();
+                    function ordenarMensagens($listaMensagens)
+                    {
+                        $tamanho = count($listaMensagens);
+                        for ($i = 0; $i < $tamanho; $i++) {
+                            for ($j = 0; $j < $tamanho - 1; $j++) {
+                                if ($listaMensagens[$j]['data_cadastro'] > $listaMensagens[$j + 1]['data_cadastro']) {
+                                    $aux = $listaMensagens[$j];
+                                    $listaMensagens[$j] = $listaMensagens[$j + 1];
+                                    $listaMensagens[$j + 1] = $aux;
+                                }
+                            }
+                        }
+                        return $listaMensagens;
+                    }
+                    function replotaMensagens()
+                    {
+                        global $mensagensEnviadas;
+                        global $mensagensRecebidas;
+                        global $photo;
+                        global $foto_professor;
+                        global $nome_professor;
+                        global $nome_usu;
+
+                        $listaMensagens = array_merge($mensagensEnviadas, $mensagensRecebidas);
+
+                        // Ordena as mensagens por data
+                        $listaordenada = ordenarMensagens($listaMensagens);
+
+                        // Imprime as mensagens
+                        foreach ($listaordenada as $mensagem) {
+                            if ($mensagem['id_usu_fk'] != $_SESSION['id_usuario']) {
+                    ?>
+                                <div class="leftMessage">
+                                    <div class="message">
+                                        <div class="messageHeader">
+                                            <div class="messageHeaderLeft">
+                                                <img src="../../img/profilepics/<?php echo "foto_professor" ?>" alt="">
+                                            </div>
+                                            <div class="messageHeaderRight">
+                                                <h6 class="m-0 font-weight-bold text-primary text-2xl">
+                                                    <?php echo 'asd' ?>
+                                                </h6>
+                                                <small class="text-muted">
+                                                    <?php echo 'data' ?>
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="messageBody">
+                                            <p>
+                                                <?php echo 'mensagem' ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <?php
+                            } else {
+                            ?>
+
+                                <div class="rightMessage">
+                                    <div class="message">
+                                        <div class="messageHeader">
+                                            <div class="messageHeaderLeft">
+                                                <img src="../../img/profilepics/<?php echo $photo ?>" alt="">
+                                            </div>
+                                            <div class="messageHeaderRight">
+                                                <h6 class="m-0 font-weight-bold text-primary ">
+                                                    <?php echo  $nome_usu ?>
+                                                </h6>
+                                                <small class="text-muted">
+                                                    <?php 
+                                                    
+                                                    echo $mensagem['data_cadastro'] ?>
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="messageBody">
+                                            <p>
+                                                <?php echo $mensagem['mensagem'] ?>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                    <?php
+                            }
+                        }
+                    }
+                    ?>
+                </div>
+
+                <div class="col send">
+                    <input type="text" class="form-control" id="mensagem" name="mensagem" placeholder="Mensagem" max="255">
+                    <button type="button" class="btn btn-primary" onclick="enviarMensagem()">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:none">
+            <!-- hide values -->
+            <input type="text" name="id_professor" id="id_professor" value="<?php echo $id_professor ?>">
+            <input type="text" name="id_aluno" id="id_aluno" value="<?php echo $idUsuario;  ?>">
+        </div>
 
 
 </body>
@@ -830,7 +1211,7 @@ $nome_turma = @$res[0]['tur_name'];
     // Paginação
     var paginaconteudo = document.getElementById("conteudosContainer");
     // paginaconteudo.style.display = "none";
-    
+
     var paginaProvas = document.getElementById("provasContainer");
     paginaProvas.style.display = "none";
     var paginaForum = document.getElementById("forumContainer");
@@ -862,11 +1243,62 @@ $nome_turma = @$res[0]['tur_name'];
             paginaDesempenho.style.display = "block";
         }
     }
+
+    // Chat 
+    function onOffChat() {
+        var chat = document.getElementById("chat");
+        if (chat.style.display == "none") {
+            chat.style.display = "flex";
+        } else {
+            chat.style.display = "none";
+        }
+    }
+
+    function enviarMensagem() {
+
+        var mensagem = document.getElementsByName("mensagem")[0].value;
+        var id_professor = document.getElementsByName("id_professor")[0].value;
+        var id_aluno = document.getElementsByName("id_aluno")[0].value;
+        // Enviar mensagem  
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        // set target 
+        form.setAttribute("target", "_blank");
+        // cria campos
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", "mensagem");
+        hiddenField.setAttribute("value", mensagem);
+        form.appendChild(hiddenField);
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", "idDestinatario");
+        hiddenField.setAttribute("value", id_professor);
+        form.appendChild(hiddenField);
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", "idRemetente");
+        hiddenField.setAttribute("value", id_aluno);
+        form.appendChild(hiddenField);
+
+        // Set action
+        form.setAttribute("action", "sendMessage.php");
+        document.body.appendChild(form);
+        form.submit();
+
+        // Chama a função para atualizar a página
+        atualizarChat();
+    }
+    // Atualiza a página
+    function atualizarChat() {
+        window.location.reload();
+    }
 </script>
 
 <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 
 <df-messenger intent="WELCOME" chat-title="Curumim Assistente" chat-icon="https://imgur.com/tx1neHH.png" agent-id="99180b3c-bb9f-48e7-9282-f6a81556ae57" language-code="pt-br"></df-messenger>
+
 <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
 
 </html>

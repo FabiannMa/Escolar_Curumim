@@ -375,9 +375,7 @@ $turmas = $query->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Page level custom scripts -->
     <script src="../js/demo/datatables-demo.js"></script>
-    <div class="modal">
-        <!-- Place at bottom of page -->
-    </div>
+    
 </body>
 
 

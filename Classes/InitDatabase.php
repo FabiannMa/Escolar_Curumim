@@ -186,6 +186,20 @@ class InitDatabase
         $pdo->query($sql);
     }
 
+    // Chat - Criar tabela de mensagens
+    public function createTableMensagens($pdo)
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS mensagens (
+            id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            id_usu_fk INT(6) UNSIGNED NOT NULL,
+            id_usu_destinatario INT(6) UNSIGNED NOT NULL,
+            mensagem TEXT NOT NULL,
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )";
+        $pdo->query($sql);
+    }
+
+
 
 
 
@@ -220,7 +234,7 @@ class InitDatabase
         $this->createTableQuestoes($pdoClass);
         $this->createTableProvaQuestao($pdoClass);
         $this->createTablePalavrasChave($pdoClass);
-
+        $this->createTableMensagens($pdoClass);
 
         // // drop
         // $this->dropAllTables($pdoClass);
