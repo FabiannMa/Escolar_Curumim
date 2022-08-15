@@ -24,6 +24,14 @@ if ($turma) {
     $stmt->bindValue(2, $id_usuario);
     $stmt->execute();
 
+    // Log de ação
+    $sql = "INSERT INTO log_personalizado(usu_id_fk, log, log_status) VALUES 
+        ($id_usuario, 'Juntou-se à turma.', 'Turmas')";
+    $pdo->query($sql);
+    
+
+
+
 
     // Insere na tabela usuario_postagem todas as postagens da turma
     $sql = "SELECT * FROM turma_topicos WHERE tur_id_fk = $turma_id";

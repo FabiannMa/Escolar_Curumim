@@ -1,5 +1,8 @@
 <?php
 require_once("config.php");
+// autenticação
+
+
 
 date_default_timezone_set('America/Manaus');
 

@@ -1082,20 +1082,20 @@ function atualizaMensagens()
                                     <div class="message">
                                         <div class="messageHeader">
                                             <div class="messageHeaderLeft">
-                                                <img src="../../img/profilepics/<?php echo "foto_professor" ?>" alt="">
+                                                <img src="../../img/profilepics/<?php echo $foto_professor ?>" alt="">
                                             </div>
                                             <div class="messageHeaderRight">
-                                                <h6 class="m-0 font-weight-bold text-primary text-2xl">
-                                                    <?php echo 'asd' ?>
+                                                <h6 class="m-0 font-weight-bold text-primary ">
+                                                    <?php echo $nome_professor ?>
                                                 </h6>
                                                 <small class="text-muted">
-                                                    <?php echo 'data' ?>
+                                                    <?php echo $mensagem['data_cadastro'] ?>
                                                 </small>
                                             </div>
                                         </div>
                                         <div class="messageBody">
                                             <p>
-                                                <?php echo 'mensagem' ?>
+                                                <?php echo $mensagem['mensagem'] ?>
                                             </p>
                                         </div>
                                     </div>

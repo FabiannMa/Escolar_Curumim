@@ -1,12 +1,13 @@
 <?php
 @session_start();
-require_once("../../conexao.php");
+require_once("../../../conexao.php");
+
 //variaveis para o menu
 $pag = @$_GET["pag"];
 $menu_atividade = "AtviMenu";
 $topicos = "TopMain";
 $questoes = "QuestoesMenuSend";
- 
+
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios where id = '$_SESSION[id_usuario]'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -20,15 +21,22 @@ if (@$_SESSION['nivel_usuario'] != 'professor' || @$_SESSION['id_usuario'] == nu
     @session_destroy();
 }
 
-
 // Recupera dados da turma 
 $id_turma = @$_GET['id_turma'];
 $query = $pdo->query("SELECT * FROM turmas where tur_hash_code = '$id_turma'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 if (@$res[0]['tur_hash_code'] == null) {
-    echo "<script language='javascript'> window.location='../index.php' </script>"; 
+    echo "<script language='javascript'> window.location='../index.php' </script>";
 }
 $nome_turma = @$res[0]['tur_name'];
+$id_num_turma = @$res[0]['tur_id_pk'];
+
+// Recupera dados da matricula
+$sql = "SELECT * FROM usuarios WHERE id in
+        (SELECT usu_id_fk FROM turma_usuario WHERE tur_id_fk = '$id_num_turma')";
+$query = $pdo->query($sql);
+$matriculados = $query->fetchAll(PDO::FETCH_ASSOC);
+$num_matriculas = @$query->rowCount();
 
 
 ?>
@@ -50,22 +58,22 @@ $nome_turma = @$res[0]['tur_name'];
 
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
     <!-- Custom fonts for this template-->
-    <link href="../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="../../css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="../../css/style.css" rel="stylesheet">
+    <link href="../../../css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../../../css/style.css" rel="stylesheet">
 
-    <link href="../../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../Packages/Trumbowyg/dist/ui/trumbowyg.min.css">
+    <link href="../../../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../Packages/Trumbowyg/dist/ui/trumbowyg.min.css">
 
     <!-- Bootstrap core JavaScript-->
-    <script src="../../vendor/jquery/jquery.min.js"></script>
-    <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../vendor/jquery/jquery.min.js"></script>
+    <script src="../../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <link rel="shortcut icon" href="../../img/ico.ico" type="image/x-icon">
-    <link rel="icon" href="../../img/ico.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../../../img/ico.ico" type="image/x-icon">
+    <link rel="icon" href="../../../img/ico.ico" type="image/x-icon">
 
 
 </head>
@@ -85,15 +93,15 @@ $nome_turma = @$res[0]['tur_name'];
                 <div class="sidebar-brand-text mx-3 d-flex flex-col ">
                     <!-- icone de home -->
                     <strong>Menu Do Professor</strong>
-                
+
                     <i class="fas fa-home"></i>
                 </div>
-                
+
             </a>
 
 
 
-            <br><br>    
+            <br><br>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -117,13 +125,13 @@ $nome_turma = @$res[0]['tur_name'];
                         <a class="collapse-item" href="../material-aula/atividade.php">Criar nova atividade</a>
                         <a class="collapse-item" href="../material-aula/lista-atividades.php">Mostrar atividades criadas</a>
                         <a class="collapse-item" href="../material-aula/boletim.php">Adicionar notas</a>
-                        <a class="collapse-item" href="<?php echo $_SERVER['REQUEST_URI']."&pag=".$questoes ?>"> Questões</a>
+                        <a class="collapse-item" href="<?php echo $_SERVER['REQUEST_URI'] . "&pag=" . $questoes ?>"> Questões</a>
 
                     </div>
                 </div>
             </li>
 
-           
+
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -140,8 +148,8 @@ $nome_turma = @$res[0]['tur_name'];
                 <div id="collapseTurma" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Turma: <?php echo "nome da turma" ?> </h6>
-                        <a class="collapse-item" href="<?php echo $url = $_SERVER['REQUEST_URI']."&pag=". $topicos ?>">Tópicos</a>
-                        <a class="collapse-item" href="gerenciar-turmas/lista-matriculas.php?id_turma=<?php echo $id_turma;?>">Alunos matriculados</a>
+                        <a class="collapse-item" href="../<?php echo "?id_turma=" . $id_turma . "&pag=" . $topicos ?>">Tópicos</a>
+                        <a class="collapse-item" href="gerenciar-turmas/lista-matriculas.php">Alunos matriculados</a>
                         <a class="collapse-item" href="gerenciar-turmas/lista-forum.php">Mostrar fórum da turma</a>
                         <!-- configurações da turma -->
                         <a class="collapse-item" href="     gerenciar-turmas/configuracoes.php">Configurações da turma</a>
@@ -163,12 +171,12 @@ $nome_turma = @$res[0]['tur_name'];
             </li>
 
             <li class="nav-item">
-                
-                
-                <a class="nav-link" href="<?php echo $url = $_SERVER['REQUEST_URI']."&pag=". $menu_atividade ?>">
+
+
+                <a class="nav-link" href="../<?php echo "?id_turma=" . $id_turma . "&pag=" .$menu_atividade ?>">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <!-- <span><b>NOTIFICAÇÕES</b></span></a> -->
-                    <span><b>ENVIAR CONTEUDO</b></span  ></a>
+                    <span><b>ENVIAR CONTEUDO</b></span></a>
             </li>
 
             <!-- Divider -->
@@ -178,19 +186,6 @@ $nome_turma = @$res[0]['tur_name'];
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-end justify-content-center" href="
-            <?php 
-            // pega a url atual
-            $url = $_SERVER['REQUEST_URI'];
-            // remove tudo depois do id_turma
-            $url = substr($url, 0, strpos($url, "&"));
-            echo $url;
-            ?>
-            " style="height: 64vh;">
-                <div class="sidebar-brand-text mx-3"><?php echo $nome_turma; ?></div>
-            </a>
 
         </ul>
         <!-- End of Sidebar -->
@@ -208,7 +203,7 @@ $nome_turma = @$res[0]['tur_name'];
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <img class="mt-2" src="../../img/logo1.png" width="160">
+                    <img class="mt-2" src="../../../img/logo1.png" width="160">
 
                     <!-- Topbar Navbar -->
                     <!-- Topbar Navbar -->
@@ -296,7 +291,7 @@ $nome_turma = @$res[0]['tur_name'];
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg" alt="...">
+                                        <img class="rounded-circle" src="../img/undraw_profile_1.svg" alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
                                     <div class="font-weight-bold">
@@ -350,7 +345,7 @@ $nome_turma = @$res[0]['tur_name'];
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $nome_usu ?></span>
-                                    <img class="img-profile rounded-circle" src="../../img/sem-foto.jpg">
+                                    <img class="img-profile rounded-circle" src="../../../img/sem-foto.jpg">
 
                                 </a>
                                 <!-- Dropdown - User Information -->
@@ -361,7 +356,7 @@ $nome_turma = @$res[0]['tur_name'];
                                     </a>
 
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="../../logout.php">
+                                    <a class="dropdown-item" href="../../../logout.php">
                                         <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-danger"></i>
                                         Sair
                                     </a>
@@ -377,39 +372,114 @@ $nome_turma = @$res[0]['tur_name'];
                 <div class="container-fluid">
 
 
+                    <!-- lista os alunos matriculados -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Alunos Matriculados</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>CPF</th>
+                                            <th>Data de Matrícula</th>
+                                            <th>Visto por último</th>
+                                            <th>Ações</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($matriculados as $matriculado) {
+                                            // recupera o ultimo visto
+
+                                            $id_aluno = $matriculado['id'];
+                                            $sql = "SELECT data_cadastro FROM log_de_acesso WHERE id_usu_fk = '$id_aluno' ORDER BY data_cadastro DESC LIMIT 1";
+                                            $result = $pdo->query($sql);
+                                            if ($result->rowCount() > 0) {
+                                                $row = $result->fetch();
+
+                                                $ultimo_visto = $result->fetch();
+                                                $ultimo_visto = $row['data_cadastro'];
+                                                // formata a data e hora
+                                                $ultimo_visto = date('d/m/Y H:i:s', strtotime($ultimo_visto));
+                                            } else {
+                                                $ultimo_visto = "Não há registros";
+                                            }
+
+                                            echo "<tr>";
+                                            echo "<td>" . $matriculado['nome'] . "</td>";
+                                            echo "<td>" . $matriculado['cpf'] . "</td>";
+                                            echo "<td>" . $matriculado['data_cadastro'] . "</td>";
+                                            echo "<td>" . $ultimo_visto . "</td>";
+                                            echo "<td><a href='../../../controller/aluno/excluir.php?id=" . $matriculado['id'] . "'><i class='fas fa-trash-alt'></i></a></td>";
+                                            echo "</tr>";
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Logs personalizados -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Registros de atividades</h6>  
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome do Aluno</th>
+                                            <th>Data</th>
+                                            <th>Tipo</th>
+                                            <th>Descrição</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+
+                                        $sql = "SELECT * FROM log_personalizado WHERE
+                                        usu_id_fk in (SELECT usu_id_fk FROM turma_usuario  WHERE tur_id_fk = '$id_num_turma')";
+                                        
+                                        $result = $pdo->query($sql);
+                                        $logs = $result->fetchAll();
 
 
-
-
-                    <!-- Finalizado aqui testes -->
-
-                    <?php
-
-                    if ($pag == null) {
-                        @include_once "turma_menu.php";
-                    } elseif ($pag == $menu_atividade) {
-                        @include_once "enviarAtividade.php";
-                    } elseif ($pag == $topicos) {
-                        @include_once "topicos.php";
-                    } elseif ($pag == $questoes){
-                        @include_once "enviarQuestao.php";
-                    }
-                        
-
-                    ?>
-
-
-
+                                        foreach ($logs as $log) {
+                                            $sql2 = "SELECT nome FROM usuarios WHERE id = '$log[usu_id_fk]'";
+                                            $nome_aluno = $pdo->query($sql2)->fetch();
+                                            echo "<tr>";
+                                            echo "<td>" . $nome_aluno[0] . "</td>";
+                                            echo "<td>" . $log['data_cadastro'] . "</td>";
+                                            echo "<td>" . $log['log_status'] . "</td>";
+                                            echo "<td>" . $log['log'] . "</td>";
+                                            echo "</tr>";
+                                        }
+                                        
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <!-- /.container-fluid -->
-
             </div>
-            <!-- End of Main Content -->
-
-
-
         </div>
-        <!-- End of Content Wrapper -->
+
+        <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+
+
+    </div>
+    <!-- End of Content Wrapper -->
 
     </div>
     <!-- End of Page Wrapper -->
@@ -501,24 +571,24 @@ $nome_turma = @$res[0]['tur_name'];
 
 
     <!-- Core plugin JavaScript-->
-    <script src="../../vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../../../vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="../../js/sb-admin-2.min.js"></script>
+    <script src="../../../js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="../../vendor/chart.js/Chart.min.js"></script>
+    <script src="../../../vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="../../js/demo/chart-area-demo.js"></script>
-    <script src="../../js/demo/chart-pie-demo.js"></script>
+    <script src="../../../js/demo/chart-area-demo.js"></script>
+    <script src="../../../js/demo/chart-pie-demo.js"></script>
 
     <!-- Page level plugins -->
-    <script src="../../vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="../../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="../../../vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../../vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="../../js/demo/datatables-demo.js"></script>
+    <script src="../../../js/demo/datatables-demo.js"></script>
 
 </body>
 

@@ -199,9 +199,28 @@ class InitDatabase
         $pdo->query($sql);
     }
 
+    public function createLogDeAcesso ($pdo)
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS log_de_acesso (
+            id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            id_usu_fk INT(6) UNSIGNED NOT NULL,
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )";
+        $pdo->query($sql);
+    }
 
-
-
+    public function createLogPersonalizado ($pdo)
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS log_personalizado (
+            id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            usu_id_fk INT(6) UNSIGNED NOT NULL,
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            log TEXT NOT NULL,
+            log_status TEXT
+        )";
+        $pdo->query($sql);
+    }
+    
 
     public function dropAllTables($pdo)
     {
@@ -235,6 +254,8 @@ class InitDatabase
         $this->createTableProvaQuestao($pdoClass);
         $this->createTablePalavrasChave($pdoClass);
         $this->createTableMensagens($pdoClass);
+        $this->createLogDeAcesso($pdoClass);
+        $this->createLogPersonalizado($pdoClass);
 
         // // drop
         // $this->dropAllTables($pdoClass);
