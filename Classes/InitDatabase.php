@@ -18,6 +18,7 @@ class InitDatabase
             senha VARCHAR(50) NOT NULL,
             cpf VARCHAR(11) NOT NULL,
             nivel VARCHAR(30) NOT NULL,
+            foto VARCHAR(80),
             data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         $pdo->query($sql);
@@ -86,7 +87,7 @@ class InitDatabase
             tur_usu_id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             tur_id_fk INT(6),
             usu_id_fk INT(6),
-            data_cadastro TIMESTAMP 
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         $pdo->query($sql);
     }
@@ -185,8 +186,41 @@ class InitDatabase
         $pdo->query($sql);
     }
 
+    // Chat - Criar tabela de mensagens
+    public function createTableMensagens($pdo)
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS mensagens (
+            id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            id_usu_fk INT(6) UNSIGNED NOT NULL,
+            id_usu_destinatario INT(6) UNSIGNED NOT NULL,
+            mensagem TEXT NOT NULL,
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )";
+        $pdo->query($sql);
+    }
 
+    public function createLogDeAcesso ($pdo)
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS log_de_acesso (
+            id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            id_usu_fk INT(6) UNSIGNED NOT NULL,
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )";
+        $pdo->query($sql);
+    }
 
+    public function createLogPersonalizado ($pdo)
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS log_personalizado (
+            id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            usu_id_fk INT(6) UNSIGNED NOT NULL,
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            log TEXT NOT NULL,
+            log_status TEXT
+        )";
+        $pdo->query($sql);
+    }
+    
 
     public function dropAllTables($pdo)
     {
@@ -198,7 +232,18 @@ class InitDatabase
                 DROP TABLE IF EXISTS questoes;
                 DROP TABLE IF EXISTS prova_questao;
                 DROP TABLE IF EXISTS palavras_chave;
-                DROP TABLE IF EXISTS questao_palavra_chave;";
+                DROP TABLE IF EXISTS questao_palavra_chave;
+                DROP TABLE IF EXISTS mensagens;
+                DROP TABLE IF EXISTS log_de_acesso;
+                DROP TABLE IF EXISTS log_personalizado;
+                DROP TABLE IF EXISTS usuarios;
+                DROP TABLE IF EXISTS turmas;
+                DROP TABLE IF EXISTS topicos;
+                DROP TABLE IF EXISTS turma_topicos;
+                DROP TABLE IF EXISTS postagens;
+                DROP TABLE IF EXISTS postagem_usuario;
+                DROP TABLE IF EXISTS turma_usuario;
+                ";
         $pdo->query($sql);
     }
 
@@ -219,9 +264,10 @@ class InitDatabase
         $this->createTableQuestoes($pdoClass);
         $this->createTableProvaQuestao($pdoClass);
         $this->createTablePalavrasChave($pdoClass);
+        $this->createTableMensagens($pdoClass);
+        $this->createLogDeAcesso($pdoClass);
+        $this->createLogPersonalizado($pdoClass);
 
-
-        // // drop
-        // $this->dropAllTables($pdoClass);
+        
     }
 }

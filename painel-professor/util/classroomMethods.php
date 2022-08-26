@@ -16,7 +16,7 @@ function verifyClassroom($pdo, $id_usuario) {
 
 function getClassrooms($pdo, $id_prof) {
     // Busca relação turma_topicos
-    $sql = "SELECT * FROM turmas";
+    $sql = "SELECT * FROM turmas WHERE tur_id_professor =" . $id_prof;
     $query = $pdo->query($sql);
 
     // retorna a quantidade de topicos da turma

@@ -1,3 +1,10 @@
+<head>
+
+
+<link rel="stylesheet" href="../../Packages/Trumbowyg/dist/ui/trumbowyg.min.css">
+
+</head>
+
 <style>
     /* Exibir novamente UL e LI */
     ul {
@@ -342,6 +349,7 @@
 
         }
 
+
         $('#exampleFormControlTextarea2').trumbowyg({
             btns: [
                 ['viewHTML'],
@@ -368,6 +376,7 @@
 
             autogrow: true
         });
+       
     </script>
 
 </div>

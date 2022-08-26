@@ -4,6 +4,50 @@ require_once("../../conexao.php");
 // Verificar se o usuário está logado antes de mostrar o conteúdo
 require_once("../utils/verifyAuth.php");
 
+//RECUPERAR DADOS DO USUÁRIO
+$query = $pdo->query("SELECT * FROM usuarios where id = '$_SESSION[id_usuario]'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$nome_usu = @$res[0]['nome'];
+$cpf_usu = @$res[0]['cpf'];
+$email_usu = @$res[0]['email'];
+$idUsuario = @$res[0]['id'];
+$photo = @$res[0]['foto'];
+
+// Recupera dados da turma 
+$query = $pdo->query("SELECT * FROM turmas where tur_id_pk = '$_GET[id]'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$nome_turma = @$res[0]['tur_name'];
+$id_professor = @$res[0]['tur_id_professor'];
+
+$mensagensEnviadas = [];
+$mensagensRecebidas = [];
+
+$sql = "SELECT * FROM mensagens WHERE id_usu_fk = '$idUsuario'";
+$res = $pdo->query($sql);
+$mensagensEnviadas = $res->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = "SELECT * FROM mensagens WHERE id_usu_destinatario = '$idUsuario'";
+$res = $pdo->query($sql);
+$mensagensRecebidas = $res->fetchAll(PDO::FETCH_ASSOC);
+
+
+function atualizaMensagens()
+{
+    global $pdo;
+    global $idUsuario;
+    global $mensagensRecebidas;
+    global $mensagensEnviadas;
+
+    $sql = "SELECT * FROM mensagens WHERE id_usu_destinatario = '$idUsuario'";
+    $res = $pdo->query($sql);
+    $mensagensRecebidas = $res->fetchAll(PDO::FETCH_ASSOC);
+
+    $sql = "SELECT * FROM mensagens WHERE id_usu_fk = '$idUsuario'";
+    $res = $pdo->query($sql);
+    $mensagensEnviadas = $res->fetchAll(PDO::FETCH_ASSOC);
+
+    replotaMensagens();
+}
 ?>
 
 
@@ -60,6 +104,160 @@ require_once("../utils/verifyAuth.php");
     </script>
 
     <style>
+        .messageModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-bottom: 20px;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            display: none;
+        }
+
+        .messageModal .card {
+            width: 100%;
+            max-width: 500px;
+            height: 85%;
+            background-color: #fff;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0px;
+        }
+
+        .messageModal .card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .messageModal .card .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+            width: 100%;
+            padding: 0px;
+        }
+
+        .messageModal .card .card-body .send {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            color: #f0f0f0;
+        }
+
+        .messageModal .card .card-body .messageArea {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            overflow-y: scroll;
+            height: calc(100% - 50px);
+        }
+
+        .messageModal .card .card-body .send input {
+            width: 100%;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 20px;
+            margin-right: 0;
+            font-size: 1.2rem;
+            color: #002aaa;
+            height: 50px;
+            border-color: #007fff;
+        }
+
+        .messageModal .card .card-body .send button {
+
+            border-radius: 5px;
+            padding: 10px;
+            margin: 20px;
+            margin-left: 0;
+            font-size: 1.2rem;
+            color: #fff;
+            height: 50px;
+            background-color: #007fff;
+        }
+
+
+        .messageModal .card .card-body .send input::placeholder {
+            color: #007fff;
+        }
+
+        .messageArea {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-y: scroll;
+            height: calc(100% - 50px);
+        }
+
+        .leftMessage {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            margin: 0;
+            background: #f0f0ff;
+            box-shadow: 0px 0px 10px #ccc;
+            width: 60%;
+            margin-left: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .rightMessage {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            margin: 0;
+            background: #007fff;
+            box-shadow: 0px 0px 10px #ccc;
+            width: 60%;
+            margin-right: 10px;
+            margin-top: 10px;
+            margin-left: calc(40% - 10px);
+            padding: 10px;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .rightMessage .messageHeaderRight * {
+            color: #fff !important;
+        }
+
+        .messageHeader img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+
+        }
+
+        .messageHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         :root {
             --line-border-fill: #3498db;
             --line-border-empty: #e0e0e0;
@@ -192,6 +390,28 @@ require_once("../utils/verifyAuth.php");
             transition: all 0.5s ease;
             transform: scale(0);
         }
+
+        .completed {
+            /* Green color */
+            background-color: rgb(0, 150, 65, .2);
+            border-color: #4CAF50;
+            color: #4CAF50;
+            font-size: 16pt;
+
+        }
+
+        .img-profile {
+
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
+
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -220,14 +440,15 @@ require_once("../utils/verifyAuth.php");
 
     </div>
     </div>
+
     <!-- Page Wrapper -->
     <div id="wrapper">
-
+        <!-- #region Menu da Página -->
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../index.php">
                 <div class="sidebar-brand-text mx-3">ALUNO</div>
             </a>
 
@@ -251,7 +472,7 @@ require_once("../utils/verifyAuth.php");
                 echo '<li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse', $topicoFormatado, '" aria-expanded="true" aria-controls="collapse', $topicoFormatado, '">
                         <i class="fas fa-fw fa-folder"></i>
-                        <span>AlO SOM</span>
+                        <span>  </span>
                     </a>
                     ';
             }
@@ -291,10 +512,8 @@ require_once("../utils/verifyAuth.php");
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
@@ -303,19 +522,13 @@ require_once("../utils/verifyAuth.php");
                         <i class="fa fa-bars"></i>
                     </button>
                     <img class="mt-2" src="../../img/logo1.png" width="160">
-
-
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
-
-
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo "bizu" ?></span>
-                                <img class="img-profile rounded-circle" src="../../img/sem-foto.jpg">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $nome_usu ?></span>
+                                <img class="img-profile rounded-circle" src="../../img/profilepics/<?php echo $photo ?>">
 
                             </a>
                             <!-- Dropdown - User Information -->
@@ -326,38 +539,94 @@ require_once("../utils/verifyAuth.php");
                                 </a>
 
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="../logout.php">
+                                <a class="dropdown-item" href="../../logout.php">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-danger"></i>
                                     Sair
                                 </a>
                             </div>
                         </li>
-
                     </ul>
-
                 </nav>
                 <!-- End of Topbar -->
+
+                <!-- #endregion  -->
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+
+                    <!-- Card do professor -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <?php echo "Informações do professor" ?>
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <?php
+                            $sql = "SELECT * FROM usuarios WHERE id ='$id_professor'";
+                            $result = $pdo->query($sql);
+                            $row = $result->fetch();
+
+                            $nome_professor = $row['nome'];
+                            $email_professor = $row['email'];
+                            $foto_professor = $row['foto'];
+                            ?>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <img class="img-profile rounded-circle" src="../../img/profilepics/<?php echo $foto_professor ?>">
+
+                                </div>
+                                <div class="col-md-8 ">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <?php echo $nome_professor ?>
+                                    </h6>
+                                    <p>
+                                        <?php echo $email_professor ?>
+                                    </p>
+                                </div>
+                                <div class="col-md-2" onclick="onOffChat()">
+                                    <a class="btn btn-primary btn-icon-split ">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-info-circle"></i>
+                                        </span>
+                                        <span class="text text-white">
+                                            Enviar mensagem
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+                    <!-- /.container-fluid -->
                     <!-- Card da pagina -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">
-                                <?php echo "Turmas 2002" ?>
+                                <?php echo $nome_turma ?>
                             </h6>
                         </div>
                         <div class="card-body">
                             <!-- Menu de Opções em cards -->
                             <div class="row">
-                                <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(1)" style="cursor: pointer">
                                     <div class="card border-left-primary shadow h-100 py-2">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                        <?php echo "Turma 2002" ?>
+                                                        <!-- TODO: Adicionar Nome da turma aqui -->
+                                                        <?php echo $nome_turma ?>
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo "Conteúdos" ?>
@@ -370,13 +639,13 @@ require_once("../utils/verifyAuth.php");
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(2)" style="cursor: pointer">
                                     <div class="card border-left-success shadow h-100 py-2">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                        <?php echo "Turma 2002" ?>
+                                                        <?php echo $nome_turma ?>
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo "Fórum" ?>
@@ -389,13 +658,13 @@ require_once("../utils/verifyAuth.php");
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(3)" style="cursor: pointer">
                                     <div class="card border-left-info shadow h-100 py-2">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                        <?php echo "Turma 2002" ?>
+                                                        <?php echo $nome_turma ?>
                                                     </div>
                                                     <div class="row no-gutters align-items-center">
                                                         <div class="col-auto">
@@ -412,13 +681,13 @@ require_once("../utils/verifyAuth.php");
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(4)" style="cursor: pointer">
                                     <div class="card border-left-warning shadow h-100 py-2">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                        <?php echo "Turma 2002" ?>
+                                                        <?php echo $nome_turma ?>
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo "Desempenho" ?>
@@ -444,11 +713,11 @@ require_once("../utils/verifyAuth.php");
 
 
                     </div>
-                    <!-- /.container-fluid -->
 
                     <div>
+
                         <!-- Titulo da pagina -->
-                        <div class="card">
+                        <div class="card" id="conteudosContainer">
                             <!-- Card Header -->
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary text-2xl">
@@ -479,20 +748,35 @@ require_once("../utils/verifyAuth.php");
                                 echo '<div class="progress-container">';
                                 foreach ($conteudos as $conteudo) {
                             ?>
-                                    <?php if ($conteudo['pos_status'] == 1 || $conteudo['pos_status'] == 3) { ?>
+                                    <?php
+                                    // recupera a relação do conteudo com o usuario
+                                    $sql2 = "SELECT * FROM postagem_usuario WHERE usu_id_fk = $_SESSION[id_usuario] AND pos_id_fk = $conteudo[pos_id_pk]";
+                                    $query2 = $pdo->query($sql2);
+                                    $relacao = $query2->fetchAll();
+                                    $StatusConteudo = $relacao[0]['pos_usu_status'];
+
+                                    ?>
+                                    <?php if ($StatusConteudo == 1 || $StatusConteudo == 2) { ?>
                                         <a onclick="openPopup(<?php echo $conteudo['pos_id_pk']; ?>)">
                                         <?php } ?>
                                         <div class="flex conteudobox" style="justify-content: center; align-items: center; flex-direction: column;">
-                                            <div class="circle <?php if ($conteudo['pos_status'] == 1) echo 'active' ?> ">
-                                                <?php if ($conteudo['pos_status'] == 1) echo 'Iniciar' ?>
-                                                <?php if ($conteudo['pos_status'] == 2) echo '<i class="fas fa-lock"></i>' ?>
-                                                <?php if ($conteudo['pos_status'] == 3) echo '<i class="fas fa-check"></i>' ?>
+                                            <div class="circle <?php
+                                                                if ($StatusConteudo == 1) {
+                                                                    echo 'active';
+                                                                }
+                                                                if ($StatusConteudo == 2) {
+                                                                    echo 'completed';
+                                                                } ?>">
+
+                                                <?php if ($StatusConteudo == 1) echo 'Iniciar' ?>
+                                                <?php if ($StatusConteudo == 0) echo '<i class="fas fa-lock"></i>' ?>
+                                                <?php if ($StatusConteudo == 2) echo '<i class="fas fa-check"></i>' ?>
                                             </div>
                                             <?php echo $conteudo['pos_titulo']; ?>
 
                                         </div>
                                         <?php
-                                        if ($conteudo['pos_status'] == 1 || $conteudo['pos_status'] == 3) {
+                                        if ($StatusConteudo == 1 || $StatusConteudo == 2) {
                                         ?>
                                         </a>
                             <?php
@@ -511,7 +795,7 @@ require_once("../utils/verifyAuth.php");
 
                         <!-- Provas -->
                         <!-- Titulo da pagina -->
-                        <div class="card">
+                        <div class="card" id="provasContainer">
                             <!-- Card Header -->
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary text-2xl">
@@ -598,121 +882,274 @@ require_once("../utils/verifyAuth.php");
                             }
                                 ?>
                                 </div>
+                        </div>
 
-                                <!-- End of Page Wrapper -->
+                        <!-- Forum -->
+                        <!-- Titulo da pagina -->
+                        <div class="card" id="forumContainer">
+                            <!-- Card Header -->
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary text-2xl">
+                                    Forum
+                                </h6>
+                            </div>
+                        </div>
+
+                        <!-- Desempenho -->
+                        <!-- Titulo da pagina -->
+                        <div class="card" id="desempenhoContainer">
+                            <!-- Card Header -->
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary text-2xl">
+                                    Desempenho
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- End of Page Wrapper -->
 
 
 
-                                <!-- Scroll to Top Button-->
-                                <a class="scroll-to-top rounded" href="#page-top">
-                                    <i class="fas fa-angle-up"></i>
-                                </a>
+                    <!-- Scroll to Top Button-->
+                    <a class="scroll-to-top rounded" href="#page-top">
+                        <i class="fas fa-angle-up"></i>
+                    </a>
 
 
 
 
-                                <!--  Modal Perfil-->
-                                <div class="modal fade" id="ModalPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Editar Perfil</h5>
-                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">×</span>
-                                                </button>
+                    <!--  Modal Perfil-->
+                    <div class="modal fade" id="ModalPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Editar Perfil</h5>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+
+
+
+                                <form id="form-perfil" method="POST" enctype="multipart/form-data">
+                                    <div class="modal-body">
+
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Nome</label>
+                                                    <input value="<?php echo $nome ?>" type="text" class="form-control" id="nome" name="nome" placeholder="Nome">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>CPF</label>
+                                                    <input value="<?php echo $cpf ?>" type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Email</label>
+                                                    <input value="<?php echo $email ?>" type="email" class="form-control" id="email" name="email" placeholder="Email">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Senha</label>
+                                                    <input value="" type="password" class="form-control" id="text" name="senha" placeholder="Senha">
+                                                </div>
                                             </div>
-
-
-
-                                            <form id="form-perfil" method="POST" enctype="multipart/form-data">
-                                                <div class="modal-body">
-
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                <label>Nome</label>
-                                                                <input value="<?php echo $nome ?>" type="text" class="form-control" id="nome" name="nome" placeholder="Nome">
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label>CPF</label>
-                                                                <input value="<?php echo $cpf ?>" type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label>Email</label>
-                                                                <input value="<?php echo $email ?>" type="email" class="form-control" id="email" name="email" placeholder="Email">
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label>Senha</label>
-                                                                <input value="" type="password" class="form-control" id="text" name="senha" placeholder="Senha">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-12">
-                                                            <div class="col-md-12 form-group">
-                                                                <label>Foto</label>
-                                                                <input value="<?php echo $img ?>" type="file" class="form-control-file" id="imagem" name="imagem" onchange="carregarImg();">
-
-                                                            </div>
-                                                            <div class="col-md-12 mb-2">
-                                                                <img src="../img/profiles/<?php echo $img ?>" alt="Carregue sua Imagem" id="target" width="100%">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-
-                                                    <small>
-                                                        <div id="mensagem" class="mr-4">
-
-                                                        </div>
-                                                    </small>
-
-
+                                            <div class="col-md-6 col-sm-12">
+                                                <div class="col-md-12 form-group">
+                                                    <label>Foto</label>
+                                                    <input value="<?php echo $img ?>" type="file" class="form-control-file" id="imagem" name="imagem" onchange="carregarImg();">
 
                                                 </div>
-                                                <div class="modal-footer">
-
-
-
-                                                    <input value="<?php echo $idUsuario ?>" type="hidden" name="txtid" id="txtid">
-                                                    <input value="<?php echo $cpf ?>" type="hidden" name="antigo" id="antigo">
-
-                                                    <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                                    <button type="submit" name="btn-salvar-perfil" id="btn-salvar-perfil" class="btn btn-primary">Salvar</button>
+                                                <div class="col-md-12 mb-2">
+                                                    <img src="../img/profiles/<?php echo $img ?>" alt="Carregue sua Imagem" id="target" width="100%">
                                                 </div>
-                                            </form>
+                                            </div>
+                                        </div>
 
 
+
+                                        <small>
+                                            <div id="mensagem" class="mr-4">
+
+                                            </div>
+                                        </small>
+
+
+
+                                    </div>
+                                    <div class="modal-footer">
+
+
+
+                                        <input value="<?php echo $idUsuario ?>" type="hidden" name="txtid" id="txtid">
+                                        <input value="<?php echo $cpf ?>" type="hidden" name="antigo" id="antigo">
+
+                                        <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                        <button type="submit" name="btn-salvar-perfil" id="btn-salvar-perfil" class="btn btn-primary">Salvar</button>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Core plugin JavaScript-->
+                    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+                    <!-- Custom scripts for all pages-->
+                    <script src="../js/sb-admin-2.min.js"></script>
+
+                    <!-- Page level plugins -->
+                    <script src="../vendor/chart.js/Chart.min.js"></script>
+
+                    <!-- Page level custom scripts -->
+                    <script src="../js/demo/chart-area-demo.js"></script>
+                    <script src="../js/demo/chart-pie-demo.js"></script>
+
+                    <!-- Page level plugins -->
+                    <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
+                    <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+                    <!-- Page level custom scripts -->
+                    <script src="../js/demo/datatables-demo.js"></script>
+                    <div class="modal">
+                        <!-- Place at bottom of page -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+    <div class="messageModal" id="chat">
+
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary text-2xl">
+                    Mensagem
+                </h6>
+                <a href="#" class="close" onclick="onOffChat()">
+                    <span aria-hidden="true">&times;</span>
+                </a>
+            </div>
+
+            <div class="card-body">
+
+                <div class="messageArea">
+                    <?php
+                    atualizaMensagens();
+                    function ordenarMensagens($listaMensagens)
+                    {
+                        $tamanho = count($listaMensagens);
+                        for ($i = 0; $i < $tamanho; $i++) {
+                            for ($j = 0; $j < $tamanho - 1; $j++) {
+                                if ($listaMensagens[$j]['data_cadastro'] > $listaMensagens[$j + 1]['data_cadastro']) {
+                                    $aux = $listaMensagens[$j];
+                                    $listaMensagens[$j] = $listaMensagens[$j + 1];
+                                    $listaMensagens[$j + 1] = $aux;
+                                }
+                            }
+                        }
+                        return $listaMensagens;
+                    }
+                    function replotaMensagens()
+                    {
+                        global $mensagensEnviadas;
+                        global $mensagensRecebidas;
+                        global $photo;
+                        global $foto_professor;
+                        global $nome_professor;
+                        global $nome_usu;
+
+                        $listaMensagens = array_merge($mensagensEnviadas, $mensagensRecebidas);
+
+                        // Ordena as mensagens por data
+                        $listaordenada = ordenarMensagens($listaMensagens);
+
+                        // Imprime as mensagens
+                        foreach ($listaordenada as $mensagem) {
+                            if ($mensagem['id_usu_fk'] != $_SESSION['id_usuario']) {
+                    ?>
+                                <div class="leftMessage">
+                                    <div class="message">
+                                        <div class="messageHeader">
+                                            <div class="messageHeaderLeft">
+                                                <img src="../../img/profilepics/<?php echo $foto_professor ?>" alt="">
+                                            </div>
+                                            <div class="messageHeaderRight">
+                                                <h6 class="m-0 font-weight-bold text-primary ">
+                                                    <?php echo $nome_professor ?>
+                                                </h6>
+                                                <small class="text-muted">
+                                                    <?php echo $mensagem['data_cadastro'] ?>
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="messageBody">
+                                            <p>
+                                                <?php echo $mensagem['mensagem'] ?>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
 
+                            <?php
+                            } else {
+                            ?>
 
-                                <!-- Core plugin JavaScript-->
-                                <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+                                <div class="rightMessage">
+                                    <div class="message">
+                                        <div class="messageHeader">
+                                            <div class="messageHeaderLeft">
+                                                <img src="../../img/profilepics/<?php echo $photo ?>" alt="">
+                                            </div>
+                                            <div class="messageHeaderRight">
+                                                <h6 class="m-0 font-weight-bold text-primary ">
+                                                    <?php echo  $nome_usu ?>
+                                                </h6>
+                                                <small class="text-muted">
+                                                    <?php 
+                                                    
+                                                    echo $mensagem['data_cadastro'] ?>
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="messageBody">
+                                            <p>
+                                                <?php echo $mensagem['mensagem'] ?>
+                                            </p>
+                                        </div>
+                                    </div>
 
-                                <!-- Custom scripts for all pages-->
-                                <script src="../js/sb-admin-2.min.js"></script>
-
-                                <!-- Page level plugins -->
-                                <script src="../vendor/chart.js/Chart.min.js"></script>
-
-                                <!-- Page level custom scripts -->
-                                <script src="../js/demo/chart-area-demo.js"></script>
-                                <script src="../js/demo/chart-pie-demo.js"></script>
-
-                                <!-- Page level plugins -->
-                                <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-                                <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-                                <!-- Page level custom scripts -->
-                                <script src="../js/demo/datatables-demo.js"></script>
-                                <div class="modal">
-                                    <!-- Place at bottom of page -->
                                 </div>
 
+                    <?php
+                            }
+                        }
+                    }
+                    ?>
+                </div>
+
+                <div class="col send">
+                    <input type="text" class="form-control" id="mensagem" name="mensagem" placeholder="Mensagem" max="255">
+                    <button type="button" class="btn btn-primary" onclick="enviarMensagem()">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:none">
+            <!-- hide values -->
+            <input type="text" name="id_professor" id="id_professor" value="<?php echo $id_professor ?>">
+            <input type="text" name="id_aluno" id="id_aluno" value="<?php echo $idUsuario;  ?>">
+        </div>
 
 
 </body>
@@ -769,13 +1206,99 @@ require_once("../utils/verifyAuth.php");
         form.appendChild(hiddenField);
         document.body.appendChild(form);
         form.submit();
+    }
 
+    // Paginação
+    var paginaconteudo = document.getElementById("conteudosContainer");
+    // paginaconteudo.style.display = "none";
+
+    var paginaProvas = document.getElementById("provasContainer");
+    paginaProvas.style.display = "none";
+    var paginaForum = document.getElementById("forumContainer");
+    paginaForum.style.display = "none";
+    var paginaDesempenho = document.getElementById("desempenhoContainer");
+    paginaDesempenho.style.display = "none";
+
+
+    function switchPage(page) {
+        if (page == "1") {
+            paginaconteudo.style.display = "block";
+            paginaProvas.style.display = "none";
+            paginaForum.style.display = "none";
+            paginaDesempenho.style.display = "none";
+        } else if (page == "3") {
+            paginaconteudo.style.display = "none";
+            paginaProvas.style.display = "block";
+            paginaForum.style.display = "none";
+            paginaDesempenho.style.display = "none";
+        } else if (page == "2") {
+            paginaconteudo.style.display = "none";
+            paginaProvas.style.display = "none";
+            paginaForum.style.display = "block";
+            paginaDesempenho.style.display = "none";
+        } else if (page == "4") {
+            paginaconteudo.style.display = "none";
+            paginaProvas.style.display = "none";
+            paginaForum.style.display = "none";
+            paginaDesempenho.style.display = "block";
+        }
+    }
+
+    // Chat 
+    function onOffChat() {
+        var chat = document.getElementById("chat");
+        if (chat.style.display == "none") {
+            chat.style.display = "flex";
+        } else {
+            chat.style.display = "none";
+        }
+    }
+
+    function enviarMensagem() {
+
+        var mensagem = document.getElementsByName("mensagem")[0].value;
+        var id_professor = document.getElementsByName("id_professor")[0].value;
+        var id_aluno = document.getElementsByName("id_aluno")[0].value;
+        // Enviar mensagem  
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        // set target 
+        form.setAttribute("target", "_blank");
+        // cria campos
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", "mensagem");
+        hiddenField.setAttribute("value", mensagem);
+        form.appendChild(hiddenField);
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", "idDestinatario");
+        hiddenField.setAttribute("value", id_professor);
+        form.appendChild(hiddenField);
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", "idRemetente");
+        hiddenField.setAttribute("value", id_aluno);
+        form.appendChild(hiddenField);
+
+        // Set action
+        form.setAttribute("action", "sendMessage.php");
+        document.body.appendChild(form);
+        form.submit();
+
+        // Chama a função para atualizar a página
+        atualizarChat();
+    }
+    // Atualiza a página
+    function atualizarChat() {
+        window.location.reload();
     }
 </script>
 
 <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 
 <df-messenger intent="WELCOME" chat-title="Curumim Assistente" chat-icon="https://imgur.com/tx1neHH.png" agent-id="99180b3c-bb9f-48e7-9282-f6a81556ae57" language-code="pt-br"></df-messenger>
+
 <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
 
 </html>

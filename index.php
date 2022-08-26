@@ -86,14 +86,13 @@ $db = new InitDatabase($pdo);
 						<small>
 							<a href="" data-toggle="modal" data-target="#modalRecuperar" title="Clique para Recuperar sua Senha" class="text-indigo-500 underline">
 								<i class="fas fa-key"></i> Esqueceu sua senha?
-								
 							</a>
 						</small>
 					</div>
 					<div>
 						<!-- TODO: Criar Página de Registro -->
 						<small>
-							<a href="" data-toggle="modal" data-target="#modalRecuperar" title="REGISTRAR-SE" class="text-indigo-500 underline">
+							<a href="signup/" class="text-indigo-500 underline">
 								<i class="fas fa-user-plus"></i>
 								Registrar-se
 							</a>
