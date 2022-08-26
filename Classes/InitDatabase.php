@@ -232,7 +232,18 @@ class InitDatabase
                 DROP TABLE IF EXISTS questoes;
                 DROP TABLE IF EXISTS prova_questao;
                 DROP TABLE IF EXISTS palavras_chave;
-                DROP TABLE IF EXISTS questao_palavra_chave;";
+                DROP TABLE IF EXISTS questao_palavra_chave;
+                DROP TABLE IF EXISTS mensagens;
+                DROP TABLE IF EXISTS log_de_acesso;
+                DROP TABLE IF EXISTS log_personalizado;
+                DROP TABLE IF EXISTS usuarios;
+                DROP TABLE IF EXISTS turmas;
+                DROP TABLE IF EXISTS topicos;
+                DROP TABLE IF EXISTS turma_topicos;
+                DROP TABLE IF EXISTS postagens;
+                DROP TABLE IF EXISTS postagem_usuario;
+                DROP TABLE IF EXISTS turma_usuario;
+                ";
         $pdo->query($sql);
     }
 
@@ -257,7 +268,6 @@ class InitDatabase
         $this->createLogDeAcesso($pdoClass);
         $this->createLogPersonalizado($pdoClass);
 
-        // // drop
-        // $this->dropAllTables($pdoClass);
+        
     }
 }

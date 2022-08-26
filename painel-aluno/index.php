@@ -209,6 +209,7 @@ $turmas = $query->fetchAll(PDO::FETCH_ASSOC);
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $nome_usu ?></span>
+                                <!-- TODO: Adicionar link da foto de perfil -->
                                 <img class="img-profile rounded-circle" src="../img/sem-foto.jpg">
 
                             </a>
