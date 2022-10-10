@@ -41,8 +41,8 @@ $prova = $result->fetch();
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="../../css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="../../css/style.css" rel="stylesheet">
+   
+    <link href="../../../css/style.css" rel="stylesheet">
 
     <link href="../../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
@@ -89,7 +89,8 @@ $prova = $result->fetch();
         }
 
         .question img {
-            width: 30%;
+            width: 20%;
+            object-fit: contain;
             margin-top: 2%;
         }
 
@@ -106,9 +107,9 @@ $prova = $result->fetch();
     </style>
 </head>
 
-<body>
+<body class=" bg-gray-900" >
 
-    <header class="flex items-center justify-between flex-wrap bg-gray-800 p-6">
+    <header class="flex items-center justify-between flex-wrap  p-6">
         <div class="flex items-center text-white mr-6 justify-between">
             <span class="font-semibold text-xl tracking-tight">Curumim </span>
         </div>
@@ -125,8 +126,8 @@ $prova = $result->fetch();
         ?>
             <div class="question <?php echo 'index' . $index; ?>">
                 <div class="flex flex-wrap justify-between">
-                    <div class="p-4 rounded-lg border shadow-md sm:p-6 bg-gray-800 border-gray-700 " style="width: 70vw; height:80vh;">
-                        <h5 class="mb-3 text-base font-semibold  lg:text-xl text-white">
+                    <div class="p-4 rounded-lg  sm:p-6 " style="width: 70vw; height:80vh;">
+                        <h5 class="mb-3 text-base font-semibold  lg:text-xl text-blue-500">
                             <?php echo $questao['que_texto']; ?>
                         </h5>
 
@@ -203,7 +204,7 @@ $prova = $result->fetch();
 
     </main>
 
-    <footer class="flex items-center justify-between flex-wrap bg-gray-800 p-6" style="position:fixed; bottom:0px; width:100%; heigth:100px">
+    <footer class="flex items-center justify-between flex-wrap bg-gray-800 p-6" style="position:fixed; bottom:0px; width:100%; height:40px">
         <!-- Progress bar -->
         <div class="w-full  rounded-full h-2.5 bg-gray-700">
             <div class="bg-blue-600 h-2.5 rounded-full" id="progress"></div>

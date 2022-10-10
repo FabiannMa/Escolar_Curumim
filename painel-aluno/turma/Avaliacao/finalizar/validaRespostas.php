@@ -32,21 +32,33 @@ foreach ($QuestoesArray as $questao) {
     $resposta = $resposta[0]['que_resposta'];
 
     // Recupera palavra-chave da questão 
-    $sql = "SELECT pal_texto FROM palavras_chave WHERE pal_id_pk in (SELECT que_keyword_id_fk FROM questoes WHERE que_id_pk = $idQuestao)";
+    $sql = "SELECT * FROM palavras_chave WHERE pal_id_pk in (SELECT que_keyword_id_fk FROM questoes WHERE que_id_pk = $idQuestao)";
 
     $palavraChave = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    $palavra_id = $palavraChave[0]['pal_id_pk'];
     $palavraChave = $palavraChave[0]['pal_texto'];
-    echo '<script> alert("' . $palavraChave . '") </script>';
 
     if ($resposta == $respostaArray) {
         $pontos += $pontosPorQuestao;
 
-        $sql = "INSERT INTO log_personalizado(usu_id_fk, log, log_status) VALUES ($idAluno, 
-        'Acertou a questão sobre $palavraChave', 'Provas')";
+        $sql = "INSERT INTO log_personalizado(usu_id_fk, log, log_status) 
+                    VALUES ($idAluno, 'Acertou a questão sobre $palavraChave', 'Provas');
+                UPDATE desempenho_por_topico 
+                    SET pontuacao = pontuacao + 0.3 
+                    WHERE id_usuario = $idAluno 
+                    AND id_topico = $palavra_id";
+
+
+
         $pdo->query($sql);
     } else {
-        $sql = "INSERT INTO log_personalizado(usu_id_fk, log, log_status) VALUES ($idAluno, 
-        'Errou questão sobre $palavraChave', 'Provas')";
+        $sql = "INSERT INTO log_personalizado(usu_id_fk, log, log_status) 
+                    VALUES ($idAluno, 'Errou questão sobre $palavraChave', 'Provas');
+                UPDATE desempenho_por_topico 
+                    SET pontuacao = pontuacao - 0.5 
+                    WHERE id_usuario = $idAluno 
+                    AND id_topico = $palavra_id";
+
         $pdo->query($sql);
     }
 }
@@ -54,6 +66,9 @@ foreach ($QuestoesArray as $questao) {
 $sql = "SELECT * FROM prova_postagem WHERE pro_id_fk = $idProva";
 $res = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 $postagem = $res[0]['pos_id_fk'];
+
+$sql = "SELECT * FROM postagens WHERE pos_id_pk = $postagem";
+$res = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 $nomePostagem = $res[0]['pos_titulo'];
 
 

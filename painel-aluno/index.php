@@ -17,6 +17,7 @@ $menu2 = "conteudo";
 $query = $pdo->query("SELECT * FROM usuarios where id = '$_SESSION[id_usuario]'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $nome_usu = @$res[0]['nome'];
+$photo = @$res[0]['foto'];
 $cpf_usu = @$res[0]['cpf'];
 $email_usu = @$res[0]['email'];
 $idUsuario = @$res[0]['id'];
@@ -63,125 +64,27 @@ $turmas = $query->fetchAll(PDO::FETCH_ASSOC);
 
     <link rel="shortcut icon" href="../img/ico.ico" type="image/x-icon">
     <link rel="icon" href="../img/ico.ico" type="image/x-icon">
+
+    <style>
+         .img-profile {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
+
+            object-fit: cover;
+        }
+    </style>
 </head>
 
 <body id="page-top">
-    </div>
-    </div>
+
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-                <div class="sidebar-brand-text mx-3">ALUNO</div>
-            </a>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Turmas
-            </div>
-
-
-            <?php
-
-            // Mostra turmas do usuário na barra de menu
-            foreach ($turmas as $turma) {
-
-                $topicoFormatado = removerAcentos(strtolower(str_replace(" ", "_", $turma['tur_name'])));
-                
-                if ($turma['tur_status'] == 1) {
-                    echo '<li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse', $topicoFormatado, '" aria-expanded="true" aria-controls="collapse', $topicoFormatado, '">
-                        <i class="fas fa-fw fa-folder"></i>
-                        <span>' . $turma['tur_name'] . '</span>
-                    </a>
-                    ';
-                }
-                if ($turma['tur_status'] == 0) {
-                    echo '<li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse', $topicoFormatado, '" aria-expanded="true" aria-controls="collapse', $topicoFormatado, '">
-                        <i class="fas fa-fw fa-folder-open"></i>
-                        <span>' . $turma['tur_name'] . '</span>
-                    </a>
-                    ';
-                }
-
-
-
-
-                echo '<div id="collapse', $topicoFormatado, '" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">';
-                echo '<div class="bg-white py-2 collapse-inner rounded">';
-                echo '<h6 class="collapse-header">Turma:</h6>';
-                echo '<a class="collapse-item" href="../turma/index.php?tur_id_pk=' . $turma['tur_id_pk'] . '">Conteúdo</a>';
-                echo '<a class="collapse-item" href="../turma/material.php?tur_id_pk=' . $turma['tur_id_pk'] . '">Material de Estudo</a>';
-                echo '<a class="collapse-item" href="../turma/forum.php?tur_id_pk=' . $turma['tur_id_pk'] . '">Fórum</a>';
-                echo '<a class="collapse-item" href="../turma/avaliacao.php?tur_id_pk=' . $turma['tur_id_pk'] . '">Avaliação</a>';
-
-                echo '</div>';
-
-
-
-
-
-
-                // <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                //     <div class="bg-white py-2 collapse-inner rounded">
-                //         <h6 class="collapse-header">Ângulos I:</h6>
-                //         <a class="collapse-item" href="index.php?pag=">Materiais de estudo</a>
-                //         <a class="collapse-item" href="index.php?pag=">Estudos complementares</a>
-                //         <a class="collapse-item" href="index.php?pag=">Atividades</a>
-                //         <a class="collapse-item" href="index.php?pag=">Revisão do Assunto</a>
-                //         <a class="collapse-item" href="index.php?pag=">Desafio</a>
-                //     </div>
-                // </div> 
-
-                echo '</li>';
-            }
-
-
-            ?>
-
-
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                TESTE SEUS CONHECIMENTOS
-            </div>
-
-
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="index.php?pag=<?php echo $menu6 ?>">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span><b>QUIZ CURUMIM</b></span></a>
-            </li>
-
-            <!-- Nav Item - Tables -->
-
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-        </ul>
-        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -209,18 +112,19 @@ $turmas = $query->fetchAll(PDO::FETCH_ASSOC);
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $nome_usu ?></span>
-                                <!-- TODO: Adicionar link da foto de perfil -->
-                                <img class="img-profile rounded-circle" src="../img/sem-foto.jpg">
+                                <img class="img-profile rounded-circle" src="../img/profilepics/<?php echo $photo ?>">
 
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="" data-toggle="modal" data-target="#ModalPerfil">
+                                <!-- <a class="dropdown-item" href="" data-toggle="modal" data-target="#ModalPerfil">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-primary"></i>
                                     Editar Perfil
                                 </a>
+                                 <div class="dropdown-divider"></div>
+                                 -->
 
-                                <div class="dropdown-divider"></div>
+
                                 <a class="dropdown-item" href="../logout.php">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-danger"></i>
                                     Sair
@@ -248,10 +152,10 @@ $turmas = $query->fetchAll(PDO::FETCH_ASSOC);
                         @include_once("../painel-aluno/avaliacao/index.php");
                     } else if (@$pag == "material") {
                         @include_once("../painel-aluno/material/index.php");
-                    } else  {
+                    } else {
                         @include_once("home.php");
                     } ?>
-                        
+
 
 
 
@@ -267,8 +171,8 @@ $turmas = $query->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
     <!-- End of Page Wrapper -->
-    
-    
+
+
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
@@ -376,7 +280,7 @@ $turmas = $query->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Page level custom scripts -->
     <script src="../js/demo/datatables-demo.js"></script>
-    
+
 </body>
 
 
