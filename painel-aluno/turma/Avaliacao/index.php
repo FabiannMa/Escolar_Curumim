@@ -204,7 +204,7 @@ $prova = $result->fetch();
 
     </main>
 
-    <footer class="flex items-center justify-between flex-wrap bg-gray-800 p-6" style="position:fixed; bottom:0px; width:100%; heigth:100px">
+    <footer class="flex items-center justify-between flex-wrap bg-gray-800 p-6" style="position:fixed; bottom:0px; width:100%; height:40px">
         <!-- Progress bar -->
         <div class="w-full  rounded-full h-2.5 bg-gray-700">
             <div class="bg-blue-600 h-2.5 rounded-full" id="progress"></div>

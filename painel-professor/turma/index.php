@@ -24,6 +24,8 @@ if (@$_SESSION['nivel_usuario'] != 'professor' || @$_SESSION['id_usuario'] == nu
 
 // Recupera dados da turma 
 $id_turma = @$_GET['id_turma'];
+$_SESSION['id_turma'] = $id_turma;
+
 $query = $pdo->query("SELECT * FROM turmas where tur_hash_code = '$id_turma'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 if (@$res[0]['tur_hash_code'] == null) {
@@ -228,7 +230,7 @@ $nome_turma = @$res[0]['tur_name'];
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-
+                    <!-- Page Heading -->
 
 
 
@@ -245,6 +247,8 @@ $nome_turma = @$res[0]['tur_name'];
                         @include_once "topicos.php";
                     } elseif ($pag == $questoes){
                         @include_once "enviarQuestao.php";
+                    }else{
+                        @include_once "turma_menu.php";
                     }
                         
 

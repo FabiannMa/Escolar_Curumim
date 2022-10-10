@@ -1,3 +1,10 @@
+<head>
+
+
+<link rel="stylesheet" href="../../Packages/Trumbowyg/dist/ui/trumbowyg.min.css">
+
+</head>
+
 <?php
 require_once("../../conexao.php");
 
@@ -18,6 +25,7 @@ $query = $pdo->query("SELECT * FROM turmas where tur_id_pk = '$_GET[id]'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $nome_turma = @$res[0]['tur_name'];
 $id_professor = @$res[0]['tur_id_professor'];
+$turma = $_GET['id'];
 
 $mensagensEnviadas = [];
 $mensagensRecebidas = [];
@@ -790,138 +798,226 @@ function atualizaMensagens()
                             <!-- Card Header -->
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary text-2xl">
-                                    Forum
+                                    Fórum
                                 </h6>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="col-md-12 flex justify-center">
+                                    <div class="card col-md-6">
+
+                                        <form action="../utils/addForum.php" method="POST">
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label for="exampleFormControlTextarea1">Adicionar Postagem</label>
+
+                                                    <!-- Trumb text area -->
+                                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" name="message"></textarea>
+                                                </div>
+                                                <input type="hidden" name="tur_id_fk" value="<?php echo $turma; ?>">
+                                                <input type="hidden" name="profile_pic" value="<?php echo $photo ?>">
+                                                <input type="hidden" name="nome" value="<?php echo $nome_usu ?>">
+                                                <button type="submit" class="btn btn-primary text-primary">Postar</button>
+                                            </div>
+
+                                            <div class="card-body">
+
+                                                <!-- Mostra postagens ordenadas por data -->
+                                                <?php
+
+                                                $sql = "SELECT * FROM forum_message WHERE tur_id_fk = '$turma' ORDER BY data_cadastro DESC";
+                                                $query = $pdo->query($sql);
+                                                $dados = $query->fetchAll();
+
+                                                foreach ($dados as $key => $value) {
+                                                    $message = $value['message'];
+                                                    $profile_pic = $value['profile_pic'];
+                                                    $nome = $value['name'];
+                                                    $data_cadastro = $value['data_cadastro'];
+
+                                                    // formata a data
+                                                    $data_cadastro = date('d/m/Y H:i:s', strtotime($data_cadastro));
+
+                                                    $data = explode(" ", $data_cadastro);
+                                                    $data = $data[0];
+                                                    $hora = explode(" ", $data_cadastro);
+                                                    $hora = $hora[1];
+
+                                                    // compara com a data atual
+                                                    $data_atual = date('d/m/Y');
+                                                    $hora_atual = date('H:i:s');
+
+                                                    if ($data == $data_atual) {
+                                                        $data = "Hoje";
+                                                    } elseif ($data == date('d/m/Y', strtotime('-1 days'))) {
+                                                        $data = "Ontem";
+                                                    }
+
+
+
+                                                ?>
+                                                    <div class="card" style="margin:10px;">
+                                                        <div class="card-body flex flex-row justify-between">
+                                                            <div class="flex flex-row justify-center">
+                                                                <img src="../../img/profilepics/<?php echo $profile_pic; ?>" alt="" class="rounded-circle" style="
+                                                    margin-right: 10px;
+                                                    object-fit: cover;
+                                                    width: 50px;
+                                                    height: 50px;
+                                                    ">
+                                                                <div class="flex flex-column justify-center ml-3">
+                                                                    <h5 class="card-title"><?php echo $nome; ?></h5>
+                                                                    <p class="card-text"><?php echo $data; ?> às <?php echo $hora; ?></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- divider -->
+                                                        <hr class="mb-4">
+                                                        <div class="card-body">
+                                                            <p class="card-text"><?php echo $message; ?></p>
+                                                        </div>
+                                                    </div>
+                                                <?php
+                                                }
+                                                ?>
+
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Desempenho -->
-                        <!-- Titulo da pagina -->
-                        <div class="card" id="desempenhoContainer">
-                            <!-- Card Header -->
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary text-2xl">
-                                    Desempenho
-                                </h6>
-
-
-                            </div>
-                            <!-- Desempenho individual  -->
-                            <div class="card shadow mb-4">
-                                <!-- Card Header -->
-                                <div class="card-header py-3 flex justify-center">
-                                    <div class="profile wd-100">
-                                        <div class="profile__info">
-                                            <div class="profile__info__item">
-                                                <div class="profile__info__item__title">
-                                                    <!-- foto de perfil -->
-                                                    <img src="../../img/profilepics/<?php echo $photo ?>" alt="Avatar" class="img-profile rounded-circle">
-                                                </div>
-                                                <div class="profile__info__item__text">
-                                                    <?php echo $_SESSION['nome_usuario']; ?>
-                                                </div>
-                                                <!-- Medals -->
-                                                <div class="profile__info__item__title">
-                                                    <!-- Icon star -->
-
-                                                    <?php
-                                                    $sql = "SELECT sum(pontuacao) as total FROM desempenho_por_topico WHERE id_usuario = $_SESSION[id_usuario]";
-                                                    $query = $pdo->query($sql);
-                                                    $total = $query->fetchAll();
-                                                    foreach ($total as $result) {
-                                                        $total = $result['total'];
-                                                    }
-
-                                                    $medals = intdiv($total, 4);
+                <!-- Desempenho -->
+                <!-- Titulo da pagina -->
+                <div class="card" id="desempenhoContainer">
+                    <!-- Card Header -->
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary text-2xl">
+                            Desempenho
+                        </h6>
 
 
-                                                    for ($i = 0; $i < 5; $i++) {
-                                                        if ($i < $medals) {
-                                                            echo '<i class="fas fa-star text-yellow-400"></i>';
-                                                        } else {
-                                                            echo '<i class="far fa-star text-yellow-400"></i>';
-                                                        }
-                                                    }
+                    </div>
+                    <!-- Desempenho individual  -->
+                    <div class="card shadow mb-4">
+                        <!-- Card Header -->
+                        <div class="card-header py-3 flex justify-center">
+                            <div class="profile wd-100">
+                                <div class="profile__info">
+                                    <div class="profile__info__item">
+                                        <div class="profile__info__item__title">
+                                            <!-- foto de perfil -->
+                                            <img src="../../img/profilepics/<?php echo $photo ?>" alt="Avatar" class="img-profile rounded-circle">
+                                        </div>
+                                        <div class="profile__info__item__text">
+                                            <?php echo $_SESSION['nome_usuario']; ?>
+                                        </div>
+                                        <!-- Medals -->
+                                        <div class="profile__info__item__title">
+                                            <!-- Icon star -->
 
-                                                    ?>
+                                            <?php
+                                            $sql = "SELECT sum(pontuacao) as total FROM desempenho_por_topico WHERE id_usuario = $_SESSION[id_usuario]";
+                                            $query = $pdo->query($sql);
+                                            $total = $query->fetchAll();
+                                            foreach ($total as $result) {
+                                                $total = $result['total'];
+                                            }
 
-                                                </div>
-                                            </div>
+                                            $medals = intdiv($total, 4);
+
+
+                                            for ($i = 0; $i < 5; $i++) {
+                                                if ($i < $medals) {
+                                                    echo '<i class="fas fa-star text-yellow-400"></i>';
+                                                } else {
+                                                    echo '<i class="far fa-star text-yellow-400"></i>';
+                                                }
+                                            }
+
+                                            ?>
 
                                         </div>
                                     </div>
+
                                 </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="progress-container">
-                                        <table class="table table-borderless" style="
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="progress-container">
+                                <table class="table table-borderless" style="
                                         width: 100%;
                                         margin: 0 auto;
                                         justify-content: center;
                                         align-items: center;
                                         display: flex;">
-                                            <?php
-                                            $sql = "SELECT * FROM desempenho_por_topico WHERE id_usuario = $_SESSION[id_usuario]";
-                                            $query = $pdo->query($sql);
-                                            $desempenho = $query->fetchAll();
+                                    <?php
+                                    $sql = "SELECT * FROM desempenho_por_topico WHERE id_usuario = $_SESSION[id_usuario]";
+                                    $query = $pdo->query($sql);
+                                    $desempenho = $query->fetchAll();
 
-                                            foreach ($desempenho as $desempenho) {
-                                                $idTopico = $desempenho['id_topico'];
-                                                $sql = "SELECT * FROM palavras_chave WHERE pal_id_pk = $idTopico";
-                                                $query = $pdo->query($sql);
-                                                $topico = $query->fetchAll();
+                                    foreach ($desempenho as $desempenho) {
+                                        $idTopico = $desempenho['id_topico'];
+                                        $sql = "SELECT * FROM palavras_chave WHERE pal_id_pk = $idTopico";
+                                        $query = $pdo->query($sql);
+                                        $topico = $query->fetchAll();
 
-                                                foreach ($topico as $topico) {
-                                                    $nomeTopico = $topico['pal_texto'];
-                                                }
+                                        foreach ($topico as $topico) {
+                                            $nomeTopico = $topico['pal_texto'];
+                                        }
 
-                                            ?>
+                                    ?>
 
-                                                <!-- profile and points -->
+                                        <!-- profile and points -->
 
-                                                <tr>
-                                                    <td class="text-right" style=" width:50%;">
-                                                        <!-- Icon medal -->
-                                                        <i class="fas fa-medal text-yellow-400"></i>
+                                        <tr>
+                                            <td class="text-right" style=" width:50%;">
+                                                <!-- Icon medal -->
+                                                <i class="fas fa-medal text-yellow-400"></i>
 
-                                                        <?php echo $nomeTopico ?>
+                                                <?php echo $nomeTopico ?>
 
-                                                    </td>
-                                                    <td class="text-left">
+                                            </td>
+                                            <td class="text-left">
 
-                                                        <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
 
-                                                        <?php
-                                                          echo $desempenho['pontuacao'] / 4;  
-                                                        ?>
+                                                <?php
+                                                echo $desempenho['pontuacao'] / 4;
+                                                ?>
 
-                                                    </td>
-                                                </tr>
+                                            </td>
+                                        </tr>
 
-                                            <?php
-                                            }
-                                            ?>
-                                        </table>
-
-                                    </div>
-
-                                </div>
+                                    <?php
+                                    }
+                                    ?>
+                                </table>
 
                             </div>
+
                         </div>
 
+                    </div>
+                </div>
 
-                        <!-- End of Page Wrapper -->
+
+                <!-- End of Page Wrapper -->
 
 
 
-                        <!-- Scroll to Top Button-->
-                        <a class="scroll-to-top rounded" href="#page-top">
-                            <i class="fas fa-angle-up"></i>
-                        </a>
+                <!-- Scroll to Top Button-->
+                <a class="scroll-to-top rounded" href="#page-top">
+                    <i class="fas fa-angle-up"></i>
+                </a>
 
-                        <!-- Modal Firs acess-->
-                        <div id="modalFirstAcess" class="black-background" style="position:absolute;
+                <!-- Modal Firs acess-->
+                <div id="modalFirstAcess" class="black-background" style="position:absolute;
                                                          width:100vw;
                                                          height:100vh;
                                                          top:0;
@@ -931,46 +1027,46 @@ function atualizaMensagens()
                                                          padding: 30vh;">
 
 
-                            <div class="modal-dialog">
-                                <div class="modal-content rounded">
-                                    <div class="modal-header">
-                                        <h2 class="modal-title" id="modalFirstAcessLabel">Bem vindo à turma!</h2>
-                                    </div>
-                                    <div class="modal-body">Para começar, você deve realizar uma pequena avaliação de nivelamento.</div>
-                                    <div class="modal-footer">
-                                        <a class="btn btn-primary" href="Avaliacao/Nivelamento?id_turma=<?php echo $_GET['id']; ?>">Iniciar avaliação</a>
-                                    </div>
-                                </div>
+                    <div class="modal-dialog">
+                        <div class="modal-content rounded">
+                            <div class="modal-header">
+                                <h2 class="modal-title" id="modalFirstAcessLabel">Bem vindo à turma!</h2>
                             </div>
-                        </div>
-
-
-                        <!-- Core plugin JavaScript-->
-                        <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-
-                        <!-- Custom scripts for all pages-->
-                        <script src="../js/sb-admin-2.min.js"></script>
-
-                        <!-- Page level plugins -->
-                        <script src="../vendor/chart.js/Chart.min.js"></script>
-
-                        <!-- Page level custom scripts -->
-                        <script src="../js/demo/chart-area-demo.js"></script>
-                        <script src="../js/demo/chart-pie-demo.js"></script>
-
-                        <!-- Page level plugins -->
-                        <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-                        <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-                        <!-- Page level custom scripts -->
-                        <script src="../js/demo/datatables-demo.js"></script>
-                        <div class="modal">
-                            <!-- Place at bottom of page -->
+                            <div class="modal-body">Para começar, você deve realizar uma pequena avaliação de nivelamento.</div>
+                            <div class="modal-footer">
+                                <a class="btn btn-primary" href="Avaliacao/Nivelamento?id_turma=<?php echo $_GET['id']; ?>">Iniciar avaliação</a>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+
+                <!-- Core plugin JavaScript-->
+                <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+                <!-- Custom scripts for all pages-->
+                <script src="../js/sb-admin-2.min.js"></script>
+
+                <!-- Page level plugins -->
+                <script src="../vendor/chart.js/Chart.min.js"></script>
+
+                <!-- Page level custom scripts -->
+                <script src="../js/demo/chart-area-demo.js"></script>
+                <script src="../js/demo/chart-pie-demo.js"></script>
+
+                <!-- Page level plugins -->
+                <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
+                <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+                <!-- Page level custom scripts -->
+                <script src="../js/demo/datatables-demo.js"></script>
+                <div class="modal">
+                    <!-- Place at bottom of page -->
+                </div>
             </div>
         </div>
+    </div>
+    </div>
     </div>
 
 
@@ -1257,8 +1353,40 @@ function atualizaMensagens()
 
 <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
 
-</html>
+
+<script src="../../Packages/Trumbowyg/dist/trumbowyg.min.js"></script>
+
+<script src="../../Packages/trumbowyg/dist/plugins/upload/trumbowyg.upload.min.js"></script>
 
 
+<script>
+    // Trumbowyg
+    $('#exampleFormControlTextarea1').trumbowyg({
+        btns: [
+            ['viewHTML'],
+            ['undo', 'redo'],
+            ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'], // Only supported in Blink browsers
+            ['unorderedList', 'orderedList'],
+            ['upload', 'insertImage', 'link'],
+            ['superscript', 'subscript'],
+            ['formatting', 'strong', 'em', ],
 
+        ],
+        lang: 'pt_br',
+        plugins: {
+            // Add imagur parameters to upload plugin for demo purposes
+            upload: {
+                serverPath: 'util/imgUpload.php',
+                fileFieldName: 'image',
+                headers: {
+                    'Authorization': 'Client-ID xxxxxxxxxxxx'
+                },
+                urlPropertyName: 'file'
+            }
+        }
+
+    });
+</script>
 </div>
+
+</html>

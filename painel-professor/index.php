@@ -27,6 +27,7 @@ $sql = "SELECT * FROM mensagens WHERE id_usu_destinatario = $idUsuario";
 $result = $pdo->query($sql);
 $mensagens = $result->fetchAll();
 
+
 $qtd = count($mensagens);
 
 ?>
@@ -441,7 +442,7 @@ $qtd = count($mensagens);
                                         });
 
                                        
-                                        
+                                        $qtd_encontrada = 0;
                                         foreach ($mensagens as $mensagem) {
                                             $qtd_encontrada++;
                                             if ($mensagem['id_usu_fk'] == $usuariofull['id']) {
@@ -507,7 +508,6 @@ $qtd = count($mensagens);
 
                                 <?php
                                     } ?>
-                                ?>
                             </div>
 
 
