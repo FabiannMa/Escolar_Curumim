@@ -30,6 +30,16 @@ $sql = "SELECT * FROM mensagens WHERE id_usu_destinatario = '$idUsuario'";
 $res = $pdo->query($sql);
 $mensagensRecebidas = $res->fetchAll(PDO::FETCH_ASSOC);
 
+$sql = "SELECT first_access FROM turma_usuario WHERE tur_id_fk = '$_GET[id]' AND usu_id_fk = '$idUsuario'";
+$res = $pdo->query($sql);
+$firstAcess = $res->fetchAll(PDO::FETCH_ASSOC);
+$firstAcess = $firstAcess[0]['first_access'];
+
+echo "<script>
+         var firstAcess = $firstAcess;
+      </script>";
+
+
 
 function atualizaMensagens()
 {
@@ -401,7 +411,6 @@ function atualizaMensagens()
         }
 
         .img-profile {
-
             width: 100px;
             height: 100px;
             border-radius: 50%;
@@ -455,57 +464,50 @@ function atualizaMensagens()
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Turmas
+            <div class="sidebar-heading" onclick="switchPage(1)">
+                Conteúdos
             </div>
-
-
-            <?php
-
-            // Mostra turmas do usuário na barra de menu
-
-            if (true) {
-                echo '<li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse', $topicoFormatado, '" aria-expanded="true" aria-controls="collapse', $topicoFormatado, '">
-                        <i class="fas fa-fw fa-folder"></i>
-                        <span>  </span>
-                    </a>
-                    ';
-            }
-            echo '</li>';
-            ?>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                TESTE SEUS CONHECIMENTOS
-            </div>
-
-
-
-            <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="index.php?pag=<?php echo $menu6 ?>">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span><b>QUIZ CURUMIM</b></span></a>
+                <a class="nav-link" href="javascript:void(0)" onclick="switchPage(1)">
+                    <h6><i class="fas fa-fw fa-tachometer-alt"></i>
+                        Conteúdos</h6>
+                </a>
             </li>
 
-            <!-- Nav Item - Tables -->
 
 
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            <div class="sidebar-heading" onclick="switchPage(3)">
+                Avaliações
             </div>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)" onclick="switchPage(3)">
+                    <h6><i class="fas fa-fw fa-tachometer-alt"></i>
+                        Avaliações</h6>
+                </a>
+            </li>
+
+            <div class="sidebar-heading" onclick="switchPage(2)">
+                Fórum
+            </div>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)" onclick="switchPage(2)">
+                    <h6><i class="fas fa-fw fa-tachometer-alt"></i>
+                        Fórum</h6>
+                </a>
+            </li>
+
+            <div class="sidebar-heading" onclick="switchPage(4)">
+                Desempenho
+            </div>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)" onclick="switchPage(4)">
+                    <h6><i class="fas fa-fw fa-tachometer-alt"></i>
+                        Desempenho</h6>
+                </a>
+            </li>
+
+
+
 
         </ul>
         <!-- End of Sidebar -->
@@ -533,12 +535,12 @@ function atualizaMensagens()
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="" data-toggle="modal" data-target="#ModalPerfil">
+                                <!-- <a class="dropdown-item" href="" data-toggle="modal" data-target="#ModalPerfil">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-primary"></i>
                                     Editar Perfil
                                 </a>
 
-                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div> -->
                                 <a class="dropdown-item" href="../../logout.php">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-danger"></i>
                                     Sair
@@ -610,109 +612,7 @@ function atualizaMensagens()
 
                     <!-- /.container-fluid -->
                     <!-- Card da pagina -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">
-                                <?php echo $nome_turma ?>
-                            </h6>
-                        </div>
-                        <div class="card-body">
-                            <!-- Menu de Opções em cards -->
-                            <div class="row">
-                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(1)" style="cursor: pointer">
-                                    <div class="card border-left-primary shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                        <!-- TODO: Adicionar Nome da turma aqui -->
-                                                        <?php echo $nome_turma ?>
-                                                    </div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                        <?php echo "Conteúdos" ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(2)" style="cursor: pointer">
-                                    <div class="card border-left-success shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                        <?php echo $nome_turma ?>
-                                                    </div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                        <?php echo "Fórum" ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(3)" style="cursor: pointer">
-                                    <div class="card border-left-info shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                        <?php echo $nome_turma ?>
-                                                    </div>
-                                                    <div class="row no-gutters align-items-center">
-                                                        <div class="col-auto">
-                                                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                                                                <?php echo "Provas" ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-3 col-md-6 mb-4" onclick="switchPage(4)" style="cursor: pointer">
-                                    <div class="card border-left-warning shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                        <?php echo $nome_turma ?>
-                                                    </div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                        <?php echo "Desempenho" ?>
 
-                                                        <!-- Desempenho em porcentagem -->
-                                                        <div class="progress progress-sm mr-2">
-                                                            <div class="progress-bar bg-warning" role="progressbar" style="width: 1%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-
-
-                    </div>
 
                     <div>
 
@@ -903,128 +803,174 @@ function atualizaMensagens()
                                 <h6 class="m-0 font-weight-bold text-primary text-2xl">
                                     Desempenho
                                 </h6>
+
+
                             </div>
-                        </div>
-                    </div>
+                            <!-- Desempenho individual  -->
+                            <div class="card shadow mb-4">
+                                <!-- Card Header -->
+                                <div class="card-header py-3 flex justify-center">
+                                    <div class="profile wd-100">
+                                        <div class="profile__info">
+                                            <div class="profile__info__item">
+                                                <div class="profile__info__item__title">
+                                                    <!-- foto de perfil -->
+                                                    <img src="../../img/profilepics/<?php echo $photo ?>" alt="Avatar" class="img-profile rounded-circle">
+                                                </div>
+                                                <div class="profile__info__item__text">
+                                                    <?php echo $_SESSION['nome_usuario']; ?>
+                                                </div>
+                                                <!-- Medals -->
+                                                <div class="profile__info__item__title">
+                                                    <!-- Icon star -->
+
+                                                    <?php
+                                                    $sql = "SELECT sum(pontuacao) as total FROM desempenho_por_topico WHERE id_usuario = $_SESSION[id_usuario]";
+                                                    $query = $pdo->query($sql);
+                                                    $total = $query->fetchAll();
+                                                    foreach ($total as $result) {
+                                                        $total = $result['total'];
+                                                    }
+
+                                                    $medals = intdiv($total, 4);
 
 
-                    <!-- End of Page Wrapper -->
+                                                    for ($i = 0; $i < 5; $i++) {
+                                                        if ($i < $medals) {
+                                                            echo '<i class="fas fa-star text-yellow-400"></i>';
+                                                        } else {
+                                                            echo '<i class="far fa-star text-yellow-400"></i>';
+                                                        }
+                                                    }
 
+                                                    ?>
 
+                                                </div>
+                                            </div>
 
-                    <!-- Scroll to Top Button-->
-                    <a class="scroll-to-top rounded" href="#page-top">
-                        <i class="fas fa-angle-up"></i>
-                    </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div class="progress-container">
+                                        <table class="table table-borderless" style="
+                                        width: 100%;
+                                        margin: 0 auto;
+                                        justify-content: center;
+                                        align-items: center;
+                                        display: flex;">
+                                            <?php
+                                            $sql = "SELECT * FROM desempenho_por_topico WHERE id_usuario = $_SESSION[id_usuario]";
+                                            $query = $pdo->query($sql);
+                                            $desempenho = $query->fetchAll();
 
+                                            foreach ($desempenho as $desempenho) {
+                                                $idTopico = $desempenho['id_topico'];
+                                                $sql = "SELECT * FROM palavras_chave WHERE pal_id_pk = $idTopico";
+                                                $query = $pdo->query($sql);
+                                                $topico = $query->fetchAll();
 
+                                                foreach ($topico as $topico) {
+                                                    $nomeTopico = $topico['pal_texto'];
+                                                }
 
+                                            ?>
 
-                    <!--  Modal Perfil-->
-                    <div class="modal fade" id="ModalPerfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Editar Perfil</h5>
-                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
+                                                <!-- profile and points -->
+
+                                                <tr>
+                                                    <td class="text-right" style=" width:50%;">
+                                                        <!-- Icon medal -->
+                                                        <i class="fas fa-medal text-yellow-400"></i>
+
+                                                        <?php echo $nomeTopico ?>
+
+                                                    </td>
+                                                    <td class="text-left">
+
+                                                        <i class="fas fa-star"></i>
+
+                                                        <?php
+                                                          echo $desempenho['pontuacao'] / 4;  
+                                                        ?>
+
+                                                    </td>
+                                                </tr>
+
+                                            <?php
+                                            }
+                                            ?>
+                                        </table>
+
+                                    </div>
+
                                 </div>
 
-
-
-                                <form id="form-perfil" method="POST" enctype="multipart/form-data">
-                                    <div class="modal-body">
-
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-12">
-                                                <div class="form-group">
-                                                    <label>Nome</label>
-                                                    <input value="<?php echo $nome ?>" type="text" class="form-control" id="nome" name="nome" placeholder="Nome">
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>CPF</label>
-                                                    <input value="<?php echo $cpf ?>" type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>Email</label>
-                                                    <input value="<?php echo $email ?>" type="email" class="form-control" id="email" name="email" placeholder="Email">
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label>Senha</label>
-                                                    <input value="" type="password" class="form-control" id="text" name="senha" placeholder="Senha">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-12">
-                                                <div class="col-md-12 form-group">
-                                                    <label>Foto</label>
-                                                    <input value="<?php echo $img ?>" type="file" class="form-control-file" id="imagem" name="imagem" onchange="carregarImg();">
-
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <img src="../img/profiles/<?php echo $img ?>" alt="Carregue sua Imagem" id="target" width="100%">
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-                                        <small>
-                                            <div id="mensagem" class="mr-4">
-
-                                            </div>
-                                        </small>
-
-
-
-                                    </div>
-                                    <div class="modal-footer">
-
-
-
-                                        <input value="<?php echo $idUsuario ?>" type="hidden" name="txtid" id="txtid">
-                                        <input value="<?php echo $cpf ?>" type="hidden" name="antigo" id="antigo">
-
-                                        <button type="button" id="btn-fechar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                        <button type="submit" name="btn-salvar-perfil" id="btn-salvar-perfil" class="btn btn-primary">Salvar</button>
-                                    </div>
-                                </form>
-
-
                             </div>
                         </div>
-                    </div>
 
 
-                    <!-- Core plugin JavaScript-->
-                    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+                        <!-- End of Page Wrapper -->
 
-                    <!-- Custom scripts for all pages-->
-                    <script src="../js/sb-admin-2.min.js"></script>
 
-                    <!-- Page level plugins -->
-                    <script src="../vendor/chart.js/Chart.min.js"></script>
 
-                    <!-- Page level custom scripts -->
-                    <script src="../js/demo/chart-area-demo.js"></script>
-                    <script src="../js/demo/chart-pie-demo.js"></script>
+                        <!-- Scroll to Top Button-->
+                        <a class="scroll-to-top rounded" href="#page-top">
+                            <i class="fas fa-angle-up"></i>
+                        </a>
 
-                    <!-- Page level plugins -->
-                    <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-                    <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+                        <!-- Modal Firs acess-->
+                        <div id="modalFirstAcess" class="black-background" style="position:absolute;
+                                                         width:100vw;
+                                                         height:100vh;
+                                                         top:0;
+                                                         left:0;
+                                                         background-color:rgba(0,0,0,0.5);
+                                                         z-index:9999;
+                                                         padding: 30vh;">
 
-                    <!-- Page level custom scripts -->
-                    <script src="../js/demo/datatables-demo.js"></script>
-                    <div class="modal">
-                        <!-- Place at bottom of page -->
+
+                            <div class="modal-dialog">
+                                <div class="modal-content rounded">
+                                    <div class="modal-header">
+                                        <h2 class="modal-title" id="modalFirstAcessLabel">Bem vindo à turma!</h2>
+                                    </div>
+                                    <div class="modal-body">Para começar, você deve realizar uma pequena avaliação de nivelamento.</div>
+                                    <div class="modal-footer">
+                                        <a class="btn btn-primary" href="Avaliacao/Nivelamento?id_turma=<?php echo $_GET['id']; ?>">Iniciar avaliação</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Core plugin JavaScript-->
+                        <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+                        <!-- Custom scripts for all pages-->
+                        <script src="../js/sb-admin-2.min.js"></script>
+
+                        <!-- Page level plugins -->
+                        <script src="../vendor/chart.js/Chart.min.js"></script>
+
+                        <!-- Page level custom scripts -->
+                        <script src="../js/demo/chart-area-demo.js"></script>
+                        <script src="../js/demo/chart-pie-demo.js"></script>
+
+                        <!-- Page level plugins -->
+                        <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
+                        <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+                        <!-- Page level custom scripts -->
+                        <script src="../js/demo/datatables-demo.js"></script>
+                        <div class="modal">
+                            <!-- Place at bottom of page -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
 
@@ -1116,8 +1062,8 @@ function atualizaMensagens()
                                                     <?php echo  $nome_usu ?>
                                                 </h6>
                                                 <small class="text-muted">
-                                                    <?php 
-                                                    
+                                                    <?php
+
                                                     echo $mensagem['data_cadastro'] ?>
                                                 </small>
                                             </div>
@@ -1173,6 +1119,16 @@ function atualizaMensagens()
     });
 
     var idPost = 0;
+
+    function closeFirstAcess() {
+        var popup = document.getElementById("modalFirstAcess");
+        popup.style.display = "none";
+    }
+
+    if (firstAcess != 1) {
+        closeFirstAcess();
+
+    }
 
     function openPopup(url) {
         var pop = document.getElementById("popConteudo");

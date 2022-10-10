@@ -19,6 +19,7 @@ class InitDatabase
             cpf VARCHAR(11) NOT NULL,
             nivel VARCHAR(30) NOT NULL,
             foto VARCHAR(80),
+            pontuacao INT(6) NOT NULL DEFAULT 0,
             data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         $pdo->query($sql);
@@ -32,6 +33,16 @@ class InitDatabase
             top_name VARCHAR(30) NOT NULL,
             top_status int NOT NULL,
             top_imagem VARCHAR(50) NOT NULL,
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)";
+        $pdo->query($sql);
+    }
+
+    public function createDesempenhoPorTopico ($pdo) {
+        $sql = "CREATE TABLE IF NOT EXISTS desempenho_por_topico (
+            id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            id_usuario INT(6) NOT NULL,
+            id_topico INT(6) NOT NULL,
+            pontuacao INT(6) NOT NULL,
             data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)";
         $pdo->query($sql);
     }
@@ -87,6 +98,7 @@ class InitDatabase
             tur_usu_id_pk INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             tur_id_fk INT(6),
             usu_id_fk INT(6),
+            first_access int DEFAULT 1,
             data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         $pdo->query($sql);
@@ -229,10 +241,23 @@ class InitDatabase
                 DROP TABLE IF EXISTS provas;
                 DROP TABLE IF EXISTS prova_postagem;
                 DROP TABLE IF EXISTS prova_usuario;
-                DROP TABLE IF EXISTS questoes;
                 DROP TABLE IF EXISTS prova_questao;
                 DROP TABLE IF EXISTS palavras_chave;
-                DROP TABLE IF EXISTS questao_palavra_chave;";
+                DROP TABLE IF EXISTS questao_palavra_chave;
+                DROP TABLE IF EXISTS mensagens;
+                DROP TABLE IF EXISTS log_de_acesso;
+                DROP TABLE IF EXISTS log_personalizado;
+                DROP TABLE IF EXISTS usuarios;
+                DROP TABLE IF EXISTS turmas;
+                DROP TABLE IF EXISTS turma_usuario;
+                DROP TABLE IF EXISTS turma_professor;
+                DROP TABLE IF EXISTS turma_postagem;
+                DROP TABLE IF EXISTS postagens;
+                DROP TABLE IF EXISTS topicos;
+                DROP TABLE IF EXISTS turma_topicos;
+                DROP TABLE IF EXISTS postagem_usuario;
+                ";
+                
         $pdo->query($sql);
     }
 
@@ -256,8 +281,9 @@ class InitDatabase
         $this->createTableMensagens($pdoClass);
         $this->createLogDeAcesso($pdoClass);
         $this->createLogPersonalizado($pdoClass);
+        $this->createDesempenhoPorTopico($pdoClass);
 
-        // // drop
+        // drop
         // $this->dropAllTables($pdoClass);
     }
 }

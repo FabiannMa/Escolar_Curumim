@@ -27,6 +27,8 @@ $sql = "SELECT * FROM mensagens WHERE id_usu_destinatario = $idUsuario";
 $result = $pdo->query($sql);
 $mensagens = $result->fetchAll();
 
+$qtd = count($mensagens);
+
 ?>
 
 <!DOCTYPE html>
@@ -187,11 +189,7 @@ $mensagens = $result->fetchAll();
 
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
+                            
                             <!-- Dropdown - Alerts -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
@@ -259,12 +257,8 @@ $mensagens = $result->fetchAll();
                                 </a>
                                 <!-- Dropdown - User Information -->
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                    <a class="dropdown-item" href="" data-toggle="modal" data-target="#ModalPerfil">
-                                        <i class="fas fa-user fa-sm fa-fw mr-2 text-primary"></i>
-                                        Editar Perfil
-                                    </a>
+                                   
 
-                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="../logout.php">
                                         <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-danger"></i>
                                         Sair
@@ -376,11 +370,12 @@ $mensagens = $result->fetchAll();
 
 
                             <div class="messageBase">
-
-
                                 <div class="MessageLeftFaces">
                                     <?php
                                     $listaDeUsuarios = [];
+
+                                    if ($qtd > 0) {
+                                     
                                     foreach ($mensagens as $mensagem) {
                                         // Recupera dados do usuário que enviou a mensagem
                                         $idRemetente  = $mensagem['id_usu_fk'];
@@ -445,9 +440,12 @@ $mensagens = $result->fetchAll();
                                             return $a['data_cadastro'] <=> $b['data_cadastro'];
                                         });
 
+                                       
+                                        
                                         foreach ($mensagens as $mensagem) {
+                                            $qtd_encontrada++;
                                             if ($mensagem['id_usu_fk'] == $usuariofull['id']) {
-
+                                                
 
                                         ?>
                                                 <div class="MessageArea">
@@ -479,6 +477,7 @@ $mensagens = $result->fetchAll();
                                         <?php
                                             }
                                         }
+                                
                                         ?>
 
                                         <div class="formSendMessage">
@@ -490,6 +489,24 @@ $mensagens = $result->fetchAll();
                                         </div>
                                     </div>
                                 <?php }
+                                    } else {
+                                        ?>
+                                    <div class="alert nomMessage" style="
+                                    /* Backgroung yellow */
+                                    background: #F9F871;
+                                    border: 1px solid #e3e6f0;
+                                    border-radius: 0.35rem;
+                                    padding: 1rem;
+                                    margin: 1rem;
+                                    text-align: center; 
+                                    ">
+                                        <h3 style="
+                                            font-size: 1.5rem;
+                                            color: #6c757d !important;">Nenhuma mensagem encontrada</h3>
+                                    </div>
+
+                                <?php
+                                    } ?>
                                 ?>
                             </div>
 
