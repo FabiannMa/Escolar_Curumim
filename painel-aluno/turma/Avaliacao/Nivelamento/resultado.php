@@ -27,6 +27,8 @@ $avancado = 0;
 $questoes_corretas = array();
 $questoes_erradas = array();
 $pontos_por_topico = array();
+
+
 // Verifica se a resposta está correta
 for( $i = 0; $i < $total_questoes; $i++ ) {
     $id_questao = $questoes[$i];
@@ -38,34 +40,43 @@ for( $i = 0; $i < $total_questoes; $i++ ) {
 
     $resposta_correta = $questao['que_resposta'];
 
+    $topico = strval($questao['que_keyword_id_fk']) . "topico";
+
+    
     if( $resposta_form == $resposta_correta ) {
         $acertos++;
-        $topico = strval($questao['que_keyword_id_fk']) . "topico";
+        
         if ($questao['que_peso'] == "Básico") {
             if (isset($pontos_por_topico[$topico])) {
-                $pontos_por_topico[$topico] += 1.8;
+                $pontos_por_topico[$topico] += 1.8;     
             } else {
-                $pontos_por_topico[$topico] = 1.8;
+                $pontos_por_topico[$topico] = 1.8;     
             }
             $basico++;
         } else if ($questao['que_peso'] == "Intermediário") {
             if (isset($pontos_por_topico[$topico])) {
-                $pontos_por_topico[$topico] += 2.5;
+                $pontos_por_topico[$topico] += 2.5;     
             } else {
-                $pontos_por_topico[$topico] = 2.5;
+                $pontos_por_topico[$topico] = 2.5;     
             }
+
             $intermediario++;
         } else if ($questao['que_peso'] == "Avançado") {
             if (isset($pontos_por_topico[$topico])) {
-                $pontos_por_topico[$topico] += 4.5;
+                $pontos_por_topico[$topico] += 4.5;     
             } else {
-                $pontos_por_topico[$topico] = 4.5;
+                $pontos_por_topico[$topico] = 4.5;     
             }
             $avancado++;
         }
         $questoes_corretas[] = $id_questao;
 
     } else {
+        if (isset($pontos_por_topico[$topico])) {
+            $pontos_por_topico[$topico] += 0.1;     
+        } else {
+            $pontos_por_topico[$topico] = 0.1;     
+        }
         $erros++;
         $questoes_erradas[] = $id_questao;
     }
@@ -86,7 +97,7 @@ $pontuacao_total = $pontos_basico + $pontos_intermediario + $pontos_avancado;
 $sql = "INSERT INTO log_personalizado(usu_id_fk, log, log_status) VALUES ($id_aluno, 'Completou o nivelamento', 'Nivelamento');"
 . "INSERT INTO log_personalizado(usu_id_fk, log, log_status) VALUES ($id_aluno, 'Obteve a pontuação inicial de: $pontuacao_total', 'Nivelamento');"
 . "INSERT INTO log_personalizado(usu_id_fk, log, log_status) VALUES ($id_aluno, 'Obteve a porcentagem de acertos de: $porcentagem_acertos', 'Nivelamento');"
-. "INSERT INTO log_personalizado(usu_id_fk, log, log_status) VALUES ($id_aluno, 'Obteve a pontuação por nível de: Básico: $pontos_basico, Intermediário: $pontos_intermediario, Avançado: $pontos_avancado', 'Nivelamento')"
+. "INSERT INTO log_personalizado(usu_id_fk, log, log_status) VALUES ($id_aluno, 'Obteve a pontuação por nível de: Básico: $pontos_basico, Intermediário: $pontos_intermediario, Avançado: $pontos_avancado', 'Nivelamento');"
 . "UPDATE turma_usuario SET first_access = 0 WHERE tur_id_fk = $id_turma AND usu_id_fk = $id_aluno";
 
 

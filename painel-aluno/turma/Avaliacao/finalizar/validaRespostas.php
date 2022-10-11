@@ -83,7 +83,7 @@ if ($pontos >= 6) {
 }
 
 // Cadastra a nota no banco de dados
-$sql = "INSERT INTO prova_usuario (pro_id_fk, usu_id_fk, pro_usu_status, pro_usu_nota ) VALUES ($idAluno, $idProva, $status, $pontos)";
+$sql = "INSERT INTO prova_usuario (pro_id_fk, usu_id_fk, pro_usu_status, pro_usu_nota ) VALUES ($idProva, $idAluno, $status, $pontos)";
 $pdo->query($sql);
 
 

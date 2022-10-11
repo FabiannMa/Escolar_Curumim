@@ -1,15 +1,18 @@
-<head>
-
-
-<link rel="stylesheet" href="../../Packages/Trumbowyg/dist/ui/trumbowyg.min.css">
-
-</head>
 
 <?php
 require_once("../../conexao.php");
 
 // Verificar se o usuário está logado antes de mostrar o conteúdo
 require_once("../utils/verifyAuth.php");
+?>
+<head>
+
+<link rel="stylesheet" href="../../Packages/Trumbowyg/dist/ui/trumbowyg.min.css">
+
+</head>
+<?php
+
+
 
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios where id = '$_SESSION[id_usuario]'");
@@ -654,13 +657,23 @@ function atualizaMensagens()
                                 echo '</div>';
                                 echo '<div class="card-body">';
                                 echo '<div class="progress-container">';
+
+
                                 foreach ($conteudos as $conteudo) {
                             ?>
                                     <?php
                                     // recupera a relação do conteudo com o usuario
                                     $sql2 = "SELECT * FROM postagem_usuario WHERE usu_id_fk = $_SESSION[id_usuario] AND pos_id_fk = $conteudo[pos_id_pk]";
+
+                                    // console log id do usuario e id do conteudo
+                              
+
                                     $query2 = $pdo->query($sql2);
                                     $relacao = $query2->fetchAll();
+
+                                    // console log
+                                    echo "<script>console.log('relacao:". json_encode($relacao)." ')</script>";
+
                                     $StatusConteudo = $relacao[0]['pos_usu_status'];
 
                                     ?>
@@ -717,12 +730,15 @@ function atualizaMensagens()
                             $query = $pdo->query($sql);
                             $provas = $query->fetchAll();
 
+                           
+                            // log id_usuario
+                            echo '<script>console.log(' . json_encode($_SESSION['id_usuario']) . ');</script>';
                             foreach ($provas as $prova) {
                                 $idProva = $prova['pro_id_pk'];
                                 $sql = "SELECT * FROM prova_usuario WHERE pro_id_fk = $idProva AND usu_id_fk = $_SESSION[id_usuario]";
                                 $query = $pdo->query($sql);
                                 $provaUsuario = $query->fetchAll();
-
+                                // console log 
                             ?>
 
                                 <div class="card shadow mb-4">
@@ -828,6 +844,9 @@ function atualizaMensagens()
                                                 $sql = "SELECT * FROM forum_message WHERE tur_id_fk = '$turma' ORDER BY data_cadastro DESC";
                                                 $query = $pdo->query($sql);
                                                 $dados = $query->fetchAll();
+
+                                                // console log
+                                                echo '<script>console.log(' . json_encode($dados) . ');</script>';
 
                                                 foreach ($dados as $key => $value) {
                                                     $message = $value['message'];
